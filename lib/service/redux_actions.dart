@@ -23,8 +23,9 @@ class SetUserAction extends ReduxAction<AppState> {
 class TryAuth extends ReduxAction<AppState> {
   final String username;
   final String password;
+  final String? server_ip;
 
-  TryAuth({required this.username, required this.password});
+  TryAuth({required this.username, required this.password, this.server_ip});
 
   @override
   Future<AppState> reduce() async {
@@ -32,12 +33,13 @@ class TryAuth extends ReduxAction<AppState> {
     var storage = const FlutterSecureStorage();
     var dialog = showLoadingDialog();
     try {
-      var response = await dio.post(SERVER_URL + 'rest-auth/login/', data: {'username': username, 'password': password});
+      var response = await dio.post(getServerUrl() + 'rest-auth/login/', data: {'username': username, 'password': password});
       var token = response.data['key'].toString();
       var user = User(username: username, token: token);
       await storage.write(key: 'username', value: username);
       await storage.write(key: 'token', value: token);
       await storage.write(key: 'last_login_date', value: DateTime.now().toLocal().toString());
+      await storage.write(key: 'server_ip', value: SERVER_IP);
       print(response.data);
       return state.copy(user: user, isAuth: true);
     } on DioError catch (e) {

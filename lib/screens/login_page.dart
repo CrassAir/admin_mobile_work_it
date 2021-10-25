@@ -1,4 +1,5 @@
 import 'package:admin_mobile_work_it/models/view_models.dart';
+import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:admin_mobile_work_it/service/redux.dart';
 import 'package:admin_mobile_work_it/service/redux_actions.dart';
 import 'package:admin_mobile_work_it/service/utils.dart';
@@ -15,7 +16,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Map<String?, String?> formData = {'username': null, 'password': null};
+  final Map<String?, String?> formData = {'username': null, 'password': null, 'server_ip': null};
 
   @override
   void initState() {
@@ -98,6 +99,32 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         },
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        initialValue: SERVER_IP,
+                        decoration: const InputDecoration(
+                            hintText: 'Сервер',
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.transparent,
+                              width: 1,
+                            )),
+                            prefixIcon: Icon(Icons.dns)),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Сервер не может быть пустым';
+                          }
+                          return null;
+                        },
+                        autofocus: true,
+                        onSaved: (String? value) {
+                          setState(() {
+                            formData['server_ip'] = value!;
+                          });
+                        },
+                      ),
                       Center(
                         child: Container(
                           height: 60,
@@ -107,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                print(formData);
+                                SERVER_IP = formData['server_ip']!;
                                 vm.tryAuth(username: formData['username'], password: formData['password']);
                               }
                             },

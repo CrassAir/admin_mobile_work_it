@@ -37,9 +37,12 @@ class _LandingPageState extends State<LandingPage> {
       var time_now = DateTime.now().toLocal();
       var username = value['username'];
       var token = value['token'];
+      SERVER_IP = value['server_ip'] ?? SERVER_IP;
+      PORT = value['port'] ?? PORT;
 
       if (last_login_date.millisecondsSinceEpoch <= time_now.millisecondsSinceEpoch) {
-        await storage.deleteAll();
+        await storage.delete(key: 'username');
+        await storage.delete(key: 'token');
         return;
       }
       var isAuth = await checkToken(token);
