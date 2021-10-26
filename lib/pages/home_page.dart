@@ -3,8 +3,10 @@ import 'package:admin_mobile_work_it/service/redux.dart';
 import 'package:animations/animations.dart';
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
-import 'add_new_card.dart';
-import 'change_user_card.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../screens/add_new_card.dart';
+import '../screens/card_for_issue_or_receive.dart';
+import '../screens/change_or_deactivate_user_card.dart';
 
 class HomePage extends StatefulWidget {
   final Function updateState;
@@ -15,9 +17,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   List<Map<String, dynamic>> listData = [
-    {'title': 'Добавить каротчки', 'widget': const AddNewCard()},
-    {'title': 'Заменить карточку сотруднику', 'widget': const ChangeUserCard()}
+    {'title': 'Добавить кары', 'widget': const AddNewCard()},
+    {'title': 'Заменить карту', 'widget': const ChangeOrDeactivateUserCard()},
+    {'title': 'Забрать или выдать карту', 'widget': const CardForIssueOrReceive()},
   ];
 
   @override
@@ -37,6 +41,8 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               onPressed: () {
                 vm.changeAuth(isAuth: false);
+                storage.delete(key: 'username');
+                storage.delete(key: 'token');
                 widget.updateState();
                 },
               icon: const Icon(Icons.logout),

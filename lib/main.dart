@@ -1,4 +1,4 @@
-import 'package:admin_mobile_work_it/screens/landing_page.dart';
+import 'package:admin_mobile_work_it/pages/landing_page.dart';
 import 'package:admin_mobile_work_it/service/redux.dart';
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';

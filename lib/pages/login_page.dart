@@ -118,7 +118,6 @@ class _LoginPageState extends State<LoginPage> {
                           }
                           return null;
                         },
-                        autofocus: true,
                         onSaved: (String? value) {
                           setState(() {
                             formData['server_ip'] = value!;

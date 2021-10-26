@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:flutter/material.dart';
 
-class ChangeUserCard extends StatefulWidget {
-  const ChangeUserCard({Key? key}) : super(key: key);
+class ChangeOrDeactivateUserCard extends StatefulWidget {
+  const ChangeOrDeactivateUserCard({Key? key}) : super(key: key);
 
   @override
-  _ChangeUserCardState createState() => _ChangeUserCardState();
+  _ChangeOrDeactivateUserCardState createState() => _ChangeOrDeactivateUserCardState();
 }
 
-class _ChangeUserCardState extends State<ChangeUserCard> {
+class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard> {
   final _items = [];
   final allItems = [];
   final GlobalKey<SliverAnimatedListState> _key = GlobalKey<SliverAnimatedListState>();
@@ -78,6 +78,10 @@ class _ChangeUserCardState extends State<ChangeUserCard> {
       customIcon = const Icon(Icons.search);
       customSearchBar = const Text('Сотрудники');
       _editingController.clear();
+      removeAll();
+      allItems.forEach((element) {
+        _addItem(element);
+      });
     }
     setState(() {});
   }
@@ -93,7 +97,7 @@ class _ChangeUserCardState extends State<ChangeUserCard> {
     return Future.delayed(const Duration(seconds: 5));
   }
 
-  void onSendData(String username) async {
+  void onChangeUserCard(String username) async {
     var resp = await tryChangeUserCard(username);
     if (resp.isEmpty) return;
     await showModalBottomSheet<void>(
@@ -107,7 +111,20 @@ class _ChangeUserCardState extends State<ChangeUserCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[Text(resp, style: const TextStyle(color: Colors.white, fontSize: 28))],
+                children: <Widget>[
+                  Text(resp, style: const TextStyle(color: Colors.white, fontSize: 28)),
+                  const SizedBox(height: 50),
+                  Container(
+                      width: 120,
+                      height: 60,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            var issued = await tryChangeStatusCard(resp, 'change_status');
+                            if (issued) Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(primary: Colors.green),
+                          child: const Text('Выдать', style: TextStyle(color: Colors.white, fontSize: 20))))
+                ],
               ),
             ),
           );
@@ -152,12 +169,25 @@ class _ChangeUserCardState extends State<ChangeUserCard> {
             itemBuilder: (BuildContext context, int index, Animation<double> animation) => SizeTransition(
               sizeFactor: animation,
               child: Card(
-                child: ListTile(
-                  leading: const Icon(Icons.account_circle),
-                  title: Text(_items[index]['full_name'].trim().isNotEmpty ? _items[index]['full_name'] : _items[index]['username'],
-                      style: const TextStyle(fontSize: 24)),
-                  onLongPress: () => onSendData(_items[index]['username']),
-                ),
+                child: ExpansionTile(
+                    // leading: const Icon(Icons.account_circle),
+                    title: Text(_items[index]['full_name'].trim().isNotEmpty ? _items[index]['full_name'] : _items[index]['username'],
+                        style: const TextStyle(fontSize: 24)),
+                    childrenPadding: const EdgeInsets.symmetric(horizontal: 20),
+                    children: <Widget>[
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                        Container(
+                            width: 150,
+                            child: ElevatedButton(onPressed: () => onChangeUserCard(_items[index]['username']), child: const Text('Поменять карту'))),
+                        // const SizedBox(width: 20),
+                        // Container(
+                        //     width: 160,
+                        //     child: ElevatedButton(
+                        //         onPressed: () => tryChangeStatusCard( _items[index]['username']),
+                        //         style: ElevatedButton.styleFrom(primary: Colors.red),
+                        //         child: const Text('Заблокировать карту'))),
+                      ])
+                    ]),
               ),
             ),
           ),

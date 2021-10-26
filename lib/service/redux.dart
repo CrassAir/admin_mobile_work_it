@@ -12,14 +12,14 @@ class Factory extends VmFactory<AppState, dynamic> {
         loading: state.loading,
         isAuth: state.isAuth,
 
-        setUser: ({required User user}) => dispatch(SetUserAction(user: user)),
+        setUser: ({required Account user}) => dispatch(SetUserAction(user: user)),
         tryAuth: ({required String username, required String password}) => dispatch(TryAuth(username: username, password: password)),
         changeAuth: ({required bool isAuth}) => dispatch(ChangeAuth(isAuth: isAuth)),
       );
 }
 
 class AppState {
-  final User? user;
+  final Account? user;
   final bool isAuth;
   final bool loading;
 
@@ -30,7 +30,7 @@ class AppState {
   });
 
   AppState copy({
-    User? user,
+    Account? user,
     bool? isAuth,
     bool? loading,
   }) {

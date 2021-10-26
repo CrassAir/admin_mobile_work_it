@@ -14,11 +14,11 @@ class AddNewCard extends StatefulWidget {
 
 class _AddNewCardState extends State<AddNewCard> {
   final GlobalKey<SliverAnimatedListState> _key = GlobalKey<SliverAnimatedListState>();
-  final _items = [];
+  final List<Map<String, String>> _items = [];
 
 
-  void _addItem(String item) {
-    if (!_items.contains(item)) {
+  void _addItem(Map<String, String> item) {
+    if (!_items.any((val) => val['card_id'] == item['card_id'])) {
       _items.insert(0, item);
       _key.currentState!.insertItem(0, duration: const Duration(milliseconds: 300));
     }
@@ -40,12 +40,22 @@ class _AddNewCardState extends State<AddNewCard> {
     _items.removeAt(index);
   }
 
+  void sendCards(String type) async {
+    if (_items.isEmpty) {
+      showErrorDialog('Нельзя отправить пустой список карт');
+      return;
+    }
+    var resp = await sendNewCards(_items, type);
+    if (resp) Navigator.pop(context);
+  }
+
   @override
   void initState() {
     super.initState();
     NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
       var identifier = tagTransform(tag);
-      _addItem(identifier);
+      var password = tagGetPassword(tag);
+      _addItem({'card_id': identifier, 'password': password});
       setState(() {});
     });
   }
@@ -72,29 +82,17 @@ class _AddNewCardState extends State<AddNewCard> {
             SpeedDialChild(
               child: const Icon(Icons.computer),
               label: 'Добавить для объектов',
-              onTap: () async {
-                if (_items.isEmpty) return;
-                var resp = await sendNewCards(_items, 'object_card');
-                if (resp) Navigator.pop(context);
-              },
+              onTap: () => sendCards('object_card'),
             ),
             SpeedDialChild(
               child: const Icon(Icons.home_work),
               label: 'Добавить для локаций',
-              onTap: () async {
-                if (_items.isEmpty) return;
-                var resp = await sendNewCards(_items, 'location_card');
-                if (resp) Navigator.pop(context);
-              },
+              onTap: () => sendCards('location_card'),
             ),
             SpeedDialChild(
               child: const Icon(Icons.accessibility),
               label: 'Добавить для пользователей',
-              onTap: () async {
-                if (_items.isEmpty) return;
-                var resp = await sendNewCards(_items, 'user_card');
-                if (resp) Navigator.pop(context);
-              },
+              onTap: () => sendCards('user_card'),
             ),
           ]),
       body: CustomScrollView(
@@ -126,7 +124,7 @@ class _AddNewCardState extends State<AddNewCard> {
                 child: Card(
                   child: ListTile(
                     leading: const Icon(Icons.credit_card_sharp),
-                    title: Text(_items[index], style: const TextStyle(fontSize: 24)),
+                    title: Text(_items[index]['card_id']!, style: const TextStyle(fontSize: 24)),
                     onLongPress: () => _removeItem(index),
                   ),
                 ),

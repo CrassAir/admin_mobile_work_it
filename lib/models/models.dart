@@ -4,12 +4,21 @@ class Auth {
   Auth({this.isAuth = false});
 }
 
-class User {
+class Account {
   String username;
   String? token;
 
-  User({required this.username, this.token});
+  Account({required this.username, this.token});
 }
+
+// class User {
+//   String username;
+//   String? firstName;
+//   String? lastName;
+//   String? thirdName;
+//   String? avatar;
+//
+// }
 
 
 // Map<String, String> choiceStatus = {

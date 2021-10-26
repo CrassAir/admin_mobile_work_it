@@ -3,7 +3,7 @@ import 'package:async_redux/async_redux.dart';
 import 'models.dart';
 
 class ViewModel extends Vm {
-  final User? user;
+  final Account? user;
   final bool isAuth;
   final bool loading;
   final Function setUser;

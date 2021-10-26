@@ -7,7 +7,7 @@ import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'home_page.dart';
+import '../pages/home_page.dart';
 import 'login_page.dart';
 
 Duration defaultDurationToLogOff = const Duration(hours: 8);
@@ -19,7 +19,7 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   FlutterSecureStorage storage = const FlutterSecureStorage();
-  User? user;
+  Account? user;
   Map<String?, String?> formData = {'username': null, 'password': null};
 
   void updateState(){
@@ -47,7 +47,7 @@ class _LandingPageState extends State<LandingPage> {
       }
       var isAuth = await checkToken(token);
       if (isAuth) {
-        StoreProvider.dispatch(context, SetUserAction(user: User(username: username!, token: token)));
+        StoreProvider.dispatch(context, SetUserAction(user: Account(username: username!, token: token)));
         StoreProvider.dispatch(context, ChangeAuth(isAuth: true));
         setState((){});
       }

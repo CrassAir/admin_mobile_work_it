@@ -10,7 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'api.dart';
 
 class SetUserAction extends ReduxAction<AppState> {
-  final User user;
+  final Account user;
 
   SetUserAction({required this.user});
 
@@ -35,7 +35,7 @@ class TryAuth extends ReduxAction<AppState> {
     try {
       var response = await dio.post(getServerUrl() + 'rest-auth/login/', data: {'username': username, 'password': password});
       var token = response.data['key'].toString();
-      var user = User(username: username, token: token);
+      var user = Account(username: username, token: token);
       await storage.write(key: 'username', value: username);
       await storage.write(key: 'token', value: token);
       await storage.write(key: 'last_login_date', value: DateTime.now().toLocal().toString());
@@ -43,7 +43,7 @@ class TryAuth extends ReduxAction<AppState> {
       print(response.data);
       return state.copy(user: user, isAuth: true);
     } on DioError catch (e) {
-      print(e);
+      showErrorDialog(e.response!.data.toString() + '\n' + e.message);
       return state;
     } finally {
       dialog.dismiss();
