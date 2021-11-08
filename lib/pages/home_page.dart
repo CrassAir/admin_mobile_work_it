@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../screens/add_new_card.dart';
 import '../screens/card_for_issue_or_receive.dart';
-import '../screens/change_or_deactivate_user_card.dart';
+import '../screens/change_user_card.dart';
 
 class HomePage extends StatefulWidget {
   final Function updateState;

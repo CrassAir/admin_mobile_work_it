@@ -54,8 +54,10 @@ class _AddNewCardState extends State<AddNewCard> {
     super.initState();
     NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
       var identifier = tagTransform(tag);
+      var SN = tagOldTransformSN(tag);
+      var oldFull = tagOldTransformFull(tag);
       var password = tagGetPassword(tag);
-      _addItem({'card_id': identifier, 'password': password});
+      _addItem({'card_id': identifier, 'old_card_id_w_sn': SN, 'old_card_id_full': oldFull, 'password': password});
       setState(() {});
     });
   }
@@ -125,6 +127,7 @@ class _AddNewCardState extends State<AddNewCard> {
                   child: ListTile(
                     leading: const Icon(Icons.credit_card_sharp),
                     title: Text(_items[index]['card_id']!, style: const TextStyle(fontSize: 24)),
+                    subtitle: Text('${_items[index]['old_card_id_w_sn']!} <-> ${_items[index]['old_card_id_full']!}'),
                     onLongPress: () => _removeItem(index),
                   ),
                 ),

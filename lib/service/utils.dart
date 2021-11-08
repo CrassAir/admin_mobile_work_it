@@ -29,9 +29,11 @@ void showSuccessDialog(String text) {
         children: [
           const Icon(Icons.check_circle_outline, color: Colors.white),
           const SizedBox(width: 10),
-          Text(
-            text,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          Flexible(
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -66,6 +68,23 @@ String tagTransform(NfcTag tag) {
   for (var el in rawData.reversed) {
     identifier = identifier + el.toRadixString(16);
   }
+  identifier = int.tryParse(identifier, radix: 16).toString();
+  return identifier;
+}
+
+String tagOldTransformSN(NfcTag tag) {
+  List rawData = tag.data['mifareclassic']['identifier'];
+  var serial = '${rawData[2].toRadixString(16)}';
+  var number = '${rawData[1].toRadixString(16)}${rawData[0].toRadixString(16)}';
+  serial = int.tryParse(serial, radix: 16).toString();
+  number = int.tryParse(number, radix: 16).toString();
+  var identifier = '$serial/$number';
+  return identifier;
+}
+
+String tagOldTransformFull(NfcTag tag) {
+  List rawData = tag.data['mifareclassic']['identifier'];
+  var identifier = '${rawData[2].toRadixString(16)}${rawData[1].toRadixString(16)}${rawData[0].toRadixString(16)}';
   identifier = int.tryParse(identifier, radix: 16).toString();
   return identifier;
 }
