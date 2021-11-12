@@ -63,17 +63,24 @@ void showErrorDialog(String text) {
 }
 
 String tagTransform(NfcTag tag) {
-  List<int> rawData = tag.data['mifareclassic']['identifier'];
+  List<int> rawData = tag.data['nfca']['identifier'];
   var identifier = '';
   for (var el in rawData.reversed) {
-    identifier = identifier + el.toRadixString(16);
+    var rad = el.toRadixString(16);
+    if (el < 16){
+      rad = '0' + rad;
+    }
+    identifier = identifier + rad;
   }
   identifier = int.tryParse(identifier, radix: 16).toString();
+  if (rawData.length > 4) {
+    identifier = identifier.substring(0, identifier.length - 2) + '00';
+  }
   return identifier;
 }
 
 String tagOldTransformSN(NfcTag tag) {
-  List rawData = tag.data['mifareclassic']['identifier'];
+  List rawData = tag.data['nfca']['identifier'];
   var serial = '${rawData[2].toRadixString(16)}';
   var number = '${rawData[1].toRadixString(16)}${rawData[0].toRadixString(16)}';
   serial = int.tryParse(serial, radix: 16).toString();
@@ -83,14 +90,14 @@ String tagOldTransformSN(NfcTag tag) {
 }
 
 String tagOldTransformFull(NfcTag tag) {
-  List rawData = tag.data['mifareclassic']['identifier'];
+  List rawData = tag.data['nfca']['identifier'];
   var identifier = '${rawData[2].toRadixString(16)}${rawData[1].toRadixString(16)}${rawData[0].toRadixString(16)}';
   identifier = int.tryParse(identifier, radix: 16).toString();
   return identifier;
 }
 
 String tagGetPassword(NfcTag tag) {
-  List<int> rawData = tag.data['mifareclassic']['identifier'];
+  List<int> rawData = tag.data['nfca']['identifier'];
   var password = '';
   for (var el in rawData) {
     password = password + el.toRadixString(16);

@@ -19,7 +19,6 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Сотрудники');
   Map? newCard;
-  Map? cardOld;
   Timer? timer;
 
   void searchInList(String value) {

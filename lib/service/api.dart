@@ -2,7 +2,7 @@ import 'package:admin_mobile_work_it/service/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-String SERVER_IP = '192.168.252.191';
+String SERVER_IP = 'test.ecoferma56.ru';
 String PORT = '9009';
 
 String getServerUrl() {
