@@ -60,7 +60,7 @@ class _LandingPageState extends State<LandingPage> {
         vm: () => Factory(this),
         builder: (BuildContext context, ViewModel vm) {
           if (vm.isAuth) {
-            return HomePage(updateState: updateState);
+            return HomePage();
           }
           return LoginPage();
         });

@@ -9,8 +9,7 @@ import '../screens/card_for_issue_or_receive.dart';
 import '../screens/change_user_card.dart';
 
 class HomePage extends StatefulWidget {
-  final Function updateState;
-  const HomePage({Key? key, required this.updateState}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -43,7 +42,6 @@ class _HomePageState extends State<HomePage> {
                 vm.changeAuth(isAuth: false);
                 storage.delete(key: 'username');
                 storage.delete(key: 'token');
-                widget.updateState();
                 },
               icon: const Icon(Icons.logout),
             )
