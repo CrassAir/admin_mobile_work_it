@@ -17,5 +17,5 @@ class ViewModel extends Vm {
     required this.changeAuth,
     required this.isAuth,
     required this.loading,
-  }) : super(equals: [user]);
+  }) : super(equals: [user, isAuth, loading]);
 }

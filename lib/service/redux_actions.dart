@@ -33,7 +33,7 @@ class TryAuth extends ReduxAction<AppState> {
     var storage = const FlutterSecureStorage();
     var dialog = showLoadingDialog();
     try {
-      var response = await dio.post(getServerUrl() + 'rest-auth/login/', data: {'username': username, 'password': password});
+      var response = await dio.post(getServerUrl() + 'rest-auth/login/', data: {'username': username, 'password': password, 'source': 'admin_app'});
       var token = response.data['key'].toString();
       var user = Account(username: username, token: token);
       await storage.write(key: 'username', value: username);

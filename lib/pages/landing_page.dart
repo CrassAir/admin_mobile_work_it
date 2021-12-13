@@ -40,11 +40,11 @@ class _LandingPageState extends State<LandingPage> {
       SERVER_IP = value['server_ip'] ?? SERVER_IP;
       PORT = value['port'] ?? PORT;
 
-      if (last_login_date.millisecondsSinceEpoch <= time_now.millisecondsSinceEpoch) {
-        await storage.delete(key: 'username');
-        await storage.delete(key: 'token');
-        return;
-      }
+      // if (last_login_date.millisecondsSinceEpoch <= time_now.millisecondsSinceEpoch) {
+      //   await storage.delete(key: 'username');
+      //   await storage.delete(key: 'token');
+      //   return;
+      // }
       var isAuth = await checkToken(token);
       if (isAuth) {
         StoreProvider.dispatch(context, SetUserAction(user: Account(username: username!, token: token)));
