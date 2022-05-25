@@ -201,6 +201,12 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
                                       child: ElevatedButton(
                                           onPressed: () => onChangeUserCard(_items[index]['username']),
                                           child: const Text('Поменять карту'))),
+                                  Container(
+                                      width: 150,
+                                      child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(primary: Colors.red),
+                                          onPressed: () => tryFireUser(_items[index]['username']).then((value) => {if (value) Navigator.pop(context)}),
+                                          child: const Text('Уволить сотрудника'))),
                                 ])
                               ]),
                         ),

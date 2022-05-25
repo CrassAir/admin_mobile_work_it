@@ -112,6 +112,21 @@ Future<bool> tryChangeUserOldCard(String username, Map cardOld) async {
   }
 }
 
+Future<bool> tryFireUser(String username) async {
+  var dio = await getDio();
+  var dialog = showLoadingDialog();
+  try {
+    var resp = await dio.delete(getServerApiUrl() + 'account/$username/fire_employee/');
+    showSuccessDialog(resp.data);
+    return true;
+  } on DioError catch (e) {
+    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    return false;
+  } finally {
+    dialog.dismiss();
+  }
+}
+
 Future<List<dynamic>> getCardForIssueOrReceive() async {
   var dio = await getDio();
   var dialog = showLoadingDialog();
