@@ -43,7 +43,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
           alignment: Alignment.center,
           width: 250,
           height: 30,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 5),
             child: Row(
@@ -95,14 +95,13 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
         builder: (BuildContext context) {
           return Container(
             height: 400,
-            color: Colors.black45,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(resp, style: const TextStyle(color: Colors.white, fontSize: 28)),
+                  Text(resp, style: const TextStyle(fontSize: 28)),
                   const SizedBox(height: 50),
                   Container(
                       width: 120,
@@ -113,7 +112,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
                             if (issued) Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(primary: Colors.green),
-                          child: const Text('Выдать', style: TextStyle(color: Colors.white, fontSize: 20))))
+                          child: const Text('Выдать', style: TextStyle(fontSize: 20))))
                 ],
               ),
             ),

@@ -51,6 +51,8 @@ class _LandingPageState extends State<LandingPage> {
         StoreProvider.dispatch(context, ChangeAuth(isAuth: true));
         setState((){});
       }
+      var isDarkTheme = value['isDarkTheme'];
+      StoreProvider.dispatch(context, ChangeTheme(isDarkTheme: isDarkTheme?.toLowerCase() == 'true'));
     });
   }
 
