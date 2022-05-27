@@ -1,8 +1,13 @@
 import 'dart:async';
 
+import 'package:admin_mobile_work_it/controllers/user_controller.dart';
+import 'package:admin_mobile_work_it/models/models.dart';
+import 'package:admin_mobile_work_it/screens/detail_user.dart';
 import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:admin_mobile_work_it/service/utils.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 
 class ChangeOrDeactivateUserCard extends StatefulWidget {
@@ -13,26 +18,12 @@ class ChangeOrDeactivateUserCard extends StatefulWidget {
 }
 
 class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard> {
-  final _items = [];
-  final allItems = [];
   final TextEditingController _editingController = TextEditingController();
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Сотрудники');
   Map? newCard;
   Timer? timer;
-
-  void searchInList(String value) {
-    timer?.cancel();
-    timer = Timer(const Duration(milliseconds: 500), () {
-      _items.clear();
-      allItems.forEach((element) {
-        if (element['full_name'].toLowerCase().contains(value.toLowerCase())) {
-          _items.add(element);
-        }
-      });
-      setState(() {});
-    });
-  }
+  var userController = Get.find<UserController>();
 
   void onSearch() {
     if (customIcon.icon == Icons.search) {
@@ -54,7 +45,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
                     child: TextField(
                       controller: _editingController,
                       autofocus: true,
-                      onChanged: searchInList,
+                      onChanged: userController.searchInList,
                       decoration: InputDecoration(
                         hintText: 'Search',
                         hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
@@ -71,20 +62,13 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
       customIcon = const Icon(Icons.search);
       customSearchBar = const Text('Сотрудники');
       _editingController.clear();
-      _items.clear();
-      _items.addAll(allItems);
+      userController.searchInList('');
     }
     setState(() {});
   }
 
   Future onRefresh() async {
-    var resp = await getUsers();
-    _items.clear();
-    if (allItems.length != resp.length) allItems.addAll(resp);
-    _items.addAll(resp);
-    setState(() {});
-    if (resp.isNotEmpty) return Future.value();
-    return Future.delayed(const Duration(seconds: 5));
+    await userController.getUsers();
   }
 
   void onChangeUserCard(String username) async {
@@ -123,11 +107,12 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
   @override
   void initState() {
     super.initState();
-    getUsers().then((value) {
-      allItems.addAll(value);
-      _items.addAll(value);
-      setState(() {});
-    });
+    userController.getUsers();
+    // getUsers().then((value) {
+    //   allItems.addAll(value);
+    //   _items.addAll(value);
+    //   setState(() {});
+    // });
     NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
       var identifier = tagTransform(tag);
       var password = tagGetPassword(tag);
@@ -135,8 +120,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
       newCard = {'card_id': identifier, 'password': password};
       print(user);
       if (user != null) {
-        _items.clear();
-        _items.add(user);
+        userController.searchInList(user['full_name']);
       }
       customIcon = const Icon(Icons.search);
       customSearchBar = const Text('Сотрудники');
@@ -152,67 +136,85 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        floatingActionButton: newCard != null
-            ? FloatingActionButton(
-                backgroundColor: Colors.red,
-                onPressed: () => setState(() {
-                      newCard = null;
-                      _items.clear();
-                      _items.addAll(allItems);
-                    }),
-                child: const Icon(Icons.close))
-            : null,
-        body: RefreshIndicator(
-          onRefresh: onRefresh,
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                expandedHeight: 50.0,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: customSearchBar,
-                  background: const FlutterLogo(),
+    return GetBuilder<UserController>(builder: (uc) {
+      List<User> users = uc.users;
+      return Scaffold(
+          floatingActionButton: newCard != null
+              ? FloatingActionButton(
+                  backgroundColor: Colors.red,
+                  onPressed: () => setState(() {
+                        newCard = null;
+                        userController.searchInList('');
+                      }),
+                  child: const Icon(Icons.close))
+              : null,
+          body: RefreshIndicator(
+            onRefresh: onRefresh,
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  expandedHeight: 50.0,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: customSearchBar,
+                    background: const FlutterLogo(),
+                  ),
+                  actions: [
+                    IconButton(
+                      onPressed: onSearch,
+                      icon: customIcon,
+                    )
+                  ],
                 ),
-                actions: [
-                  IconButton(
-                    onPressed: onSearch,
-                    icon: customIcon,
-                  )
-                ],
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) => Card(
-                          child: ExpansionTile(
-                              key: UniqueKey(),
-                              // leading: const Icon(Icons.account_circle),
-                              title: Text(
-                                  _items[index]['full_name'].trim().isNotEmpty
-                                      ? _items[index]['full_name']
-                                      : _items[index]['username'],
-                                  style: const TextStyle(fontSize: 24)),
-                              subtitle: newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
-                              childrenPadding: const EdgeInsets.symmetric(horizontal: 20),
-                              children: <Widget>[
-                                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                                  Container(
-                                      width: 150,
-                                      child: ElevatedButton(
-                                          onPressed: () => onChangeUserCard(_items[index]['username']),
-                                          child: const Text('Поменять карту'))),
-                                  Container(
-                                      width: 150,
-                                      child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(primary: Colors.red),
-                                          onPressed: () => tryFireUser(_items[index]['username']).then((value) => {if (value) Navigator.pop(context)}),
-                                          child: const Text('Уволить сотрудника'))),
-                                ])
-                              ]),
-                        ),
-                    childCount: _items.length),
-              )
-            ],
-          ),
-        ));
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) => Card(
+                            child: OpenContainer(
+                                openColor: Theme.of(context).cardColor,
+                                closedColor: Theme.of(context).cardColor,
+                                closedBuilder: (context, action) {
+                                  return ListTile(
+                                    tileColor: Theme.of(context).cardColor,
+                                    title: Text(
+                                        users[index].full_name!.trim().isNotEmpty
+                                            ? users[index].full_name!
+                                            : users[index].username!,
+                                        style: const TextStyle(fontSize: 24)),
+                                    subtitle:
+                                        newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
+                                  );
+                                },
+                                openBuilder: (context, action) => DetailUser(user: users[index], newCard: newCard)),
+                            //   ExpansionTile(
+                            //       key: UniqueKey(),
+                            //       // leading: const Icon(Icons.account_circle),
+                            //       title: Text(
+                            //           _items[index]['full_name'].trim().isNotEmpty
+                            //               ? _items[index]['full_name']
+                            //               : _items[index]['username'],
+                            //           style: const TextStyle(fontSize: 24)),
+                            //       subtitle: newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
+                            //       childrenPadding: const EdgeInsets.symmetric(horizontal: 20),
+                            //       children: <Widget>[
+                            //         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                            //           Container(
+                            //               width: 150,
+                            //               child: ElevatedButton(
+                            //                   onPressed: () => onChangeUserCard(_items[index]['username']),
+                            //                   child: const Text('Поменять карту'))),
+                            //           Container(
+                            //               width: 150,
+                            //               child: ElevatedButton(
+                            //                   style: ElevatedButton.styleFrom(primary: Colors.red),
+                            //                   onPressed: () => tryFireUser(_items[index]['username']).then((value) => {if (value) Navigator.pop(context)}),
+                            //                   child: const Text('Уволить сотрудника'))),
+                            //         ])
+                            //       ]),
+                          ),
+                      childCount: users.length),
+                )
+              ],
+            ),
+          ));
+    });
   }
 }

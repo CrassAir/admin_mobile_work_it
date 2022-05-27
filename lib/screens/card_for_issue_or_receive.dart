@@ -11,7 +11,7 @@ class CardForIssueOrReceive extends StatefulWidget {
 }
 
 class _CardForIssueOrReceiveState extends State<CardForIssueOrReceive> {
-  final _items = [];
+  final List _items = [];
   final GlobalKey<SliverAnimatedListState> _key = GlobalKey<SliverAnimatedListState>();
   Timer? timer;
 

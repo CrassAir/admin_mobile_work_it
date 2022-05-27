@@ -1,20 +1,22 @@
+import 'package:admin_mobile_work_it/controllers/account_controller.dart';
 import 'package:admin_mobile_work_it/dark_theme.dart';
-import 'package:admin_mobile_work_it/pages/landing_page.dart';
-import 'package:admin_mobile_work_it/service/redux.dart';
-import 'package:admin_mobile_work_it/service/redux_actions.dart';
-import 'package:async_redux/async_redux.dart';
+import 'package:admin_mobile_work_it/pages/home_page.dart';
+import 'package:admin_mobile_work_it/pages/login_page.dart';
+import 'package:admin_mobile_work_it/routes.dart';
+import 'package:admin_mobile_work_it/service/api.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:overlay_support/overlay_support.dart';
+import 'package:get/get.dart';
+import 'package:admin_mobile_work_it/dependencies.dart' as dep;
 
-import 'models/view_models.dart';
+List<CameraDescription> cameras = [];
 
-Store<AppState>? store;
-
-void main() {
-  var state = AppState.initialState();
-  store = Store<AppState>(initialState: state);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
+  await dep.init();
   runApp(const MyApp());
 }
 
@@ -27,6 +29,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isDarkMode = false;
+  FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   void initState() {
@@ -34,19 +37,46 @@ class _MyAppState extends State<MyApp> {
 
     var brightness = SchedulerBinding.instance!.window.platformBrightness;
     isDarkMode = brightness == Brightness.dark;
+
+    Get.find<AccountController>().checkToken().then((isAuth) {
+      if (isAuth) {
+        Get.offAndToNamed(RouterHelper.home);
+      } else {
+        Get.offAndToNamed(RouterHelper.login);
+      }
+    });
+
+    // // Проверка записи в хранилище
+    // storage.readAll().then((value) async {
+    //   // var last_login_date = DateTime.parse(value['last_login_date'] ?? '0001-01-01').add(defaultDurationToLogOff);
+    //   // var time_now = DateTime.now().toLocal();
+    //   var username = value['username'];
+    //   var token = value['token'];
+    //   SERVER_IP = value['server_ip'] ?? SERVER_IP;
+    //   PORT = value['port'] ?? PORT;
+    //
+    //   // if (last_login_date.millisecondsSinceEpoch <= time_now.millisecondsSinceEpoch) {
+    //   //   await storage.delete(key: 'username');
+    //   //   await storage.delete(key: 'token');
+    //   //   return;
+    //   // }
+    //   var isAuth = await checkToken(token);
+    //
+    //   if (isAuth) {
+    //     setState((){});
+    //   }
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport.global(
-        child: StoreProvider(
-            store: store!,
-            child: MaterialApp(
-              title: 'AdminWorkIt',
-              debugShowCheckedModeBanner: true,
-              theme: Styles.themeData(isDarkMode, context),
-              darkTheme: Styles.themeData(isDarkMode, context),
-              home: LandingPage(),
-            )));
+    return GetMaterialApp(
+      title: 'AdminWorkIt',
+      debugShowCheckedModeBanner: false,
+      theme: Styles.themeData(isDarkMode, context),
+      darkTheme: Styles.themeData(isDarkMode, context),
+      initialRoute: RouterHelper.initial,
+      getPages: RouterHelper.routes,
+    );
   }
 }
