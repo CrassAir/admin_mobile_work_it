@@ -1,14 +1,14 @@
+import 'package:admin_mobile_work_it/constance.dart';
 import 'package:admin_mobile_work_it/data/api_client.dart';
 import 'package:get/get.dart';
 
 class AccountRepo extends GetxService {
   final ApiClient apiClient;
-  final String uri;
 
-  AccountRepo({required this.apiClient, required this.uri});
+  AccountRepo({required this.apiClient});
 
   Future<Response> checkToken(String token) async {
-    Response resp = await apiClient.postData(uri + 'check_token/', {'token': token});
+    Response resp = await apiClient.postData('${AppConstance.API_URL}check_token/', {'token': token});
     if (resp.statusCode == 200) {
       apiClient.updateHeaders(token);
     }

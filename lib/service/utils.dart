@@ -1,8 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 const notificationDuration = Duration(seconds: 3);
+
+void loadingSnack() {
+  Future.delayed(Duration.zero, () {
+    Get.snackbar('', '',
+        titleText: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Loading...',
+              style: TextStyle(fontSize: 28),
+            ),
+            const CircularProgressIndicator()
+          ],
+        ),
+        animationDuration: const Duration(milliseconds: 500),
+        duration: const Duration(minutes: 1));
+  });
+}
+
+void messageSuccessSnack({required String title, String? sub}) {
+  Future.delayed(Duration.zero, () {
+    Get.snackbar(title, sub ?? '',
+        animationDuration: const Duration(milliseconds: 500),
+        backgroundColor: Colors.green,
+        dismissDirection: DismissDirection.startToEnd,
+        duration: notificationDuration,);
+  });
+}
+
+void messageFailSnack({required String title, String? sub}) {
+  Future.delayed(Duration.zero, () {
+    Get.snackbar(title, sub ?? '',
+      animationDuration: const Duration(milliseconds: 500),
+      backgroundColor: Colors.red,
+      dismissDirection: DismissDirection.startToEnd,
+      duration: notificationDuration,);
+  });
+}
 
 OverlaySupportEntry showLoadingDialog() {
   return showSimpleNotification(
@@ -32,7 +71,8 @@ void showSuccessDialog(String text) {
           Flexible(
             child: Text(
               text,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -52,7 +92,8 @@ void showErrorDialog(String text) {
           const SizedBox(width: 10),
           Text(
             text,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -67,7 +108,7 @@ String tagTransform(NfcTag tag) {
   var identifier = '';
   for (var el in rawData.reversed) {
     var rad = el.toRadixString(16);
-    if (el < 16){
+    if (el < 16) {
       rad = '0' + rad;
     }
     identifier = identifier + rad;
@@ -91,7 +132,8 @@ String tagOldTransformSN(NfcTag tag) {
 
 String tagOldTransformFull(NfcTag tag) {
   List rawData = tag.data['nfca']['identifier'];
-  var identifier = '${rawData[2].toRadixString(16)}${rawData[1].toRadixString(16)}${rawData[0].toRadixString(16)}';
+  var identifier =
+      '${rawData[2].toRadixString(16)}${rawData[1].toRadixString(16)}${rawData[0].toRadixString(16)}';
   identifier = int.tryParse(identifier, radix: 16).toString();
   return identifier;
 }

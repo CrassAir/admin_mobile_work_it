@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 
 class ApiClient extends GetConnect implements GetxService {
   final String appBaseUrl;
-  final FlutterSecureStorage _flutterSecureStorage = const FlutterSecureStorage();
-
   late Map<String, String> _mainHeaders;
 
   ApiClient({required this.appBaseUrl}) {

@@ -1,4 +1,4 @@
-import 'package:admin_mobile_work_it/controllers/account_controller.dart';
+import 'package:admin_mobile_work_it/controllers/account_ctrl.dart';
 import 'package:admin_mobile_work_it/dark_theme.dart';
 import 'package:admin_mobile_work_it/pages/home_page.dart';
 import 'package:admin_mobile_work_it/pages/login_page.dart';
@@ -30,6 +30,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isDarkMode = false;
   FlutterSecureStorage storage = const FlutterSecureStorage();
+  final AccountCtrl accountCtrl = Get.find();
 
   @override
   void initState() {
@@ -38,34 +39,15 @@ class _MyAppState extends State<MyApp> {
     var brightness = SchedulerBinding.instance!.window.platformBrightness;
     isDarkMode = brightness == Brightness.dark;
 
-    Get.find<AccountController>().checkToken().then((isAuth) {
-      if (isAuth) {
-        Get.offAndToNamed(RouterHelper.home);
-      } else {
-        Get.offAndToNamed(RouterHelper.login);
-      }
+    storage.read(key: 'token').then((token) {
+      accountCtrl.checkToken(token: token).then((isAuth) {
+        if (isAuth) {
+          Get.offAndToNamed(RouterHelper.home);
+        } else {
+          Get.offAndToNamed(RouterHelper.login);
+        }
+      });
     });
-
-    // // Проверка записи в хранилище
-    // storage.readAll().then((value) async {
-    //   // var last_login_date = DateTime.parse(value['last_login_date'] ?? '0001-01-01').add(defaultDurationToLogOff);
-    //   // var time_now = DateTime.now().toLocal();
-    //   var username = value['username'];
-    //   var token = value['token'];
-    //   SERVER_IP = value['server_ip'] ?? SERVER_IP;
-    //   PORT = value['port'] ?? PORT;
-    //
-    //   // if (last_login_date.millisecondsSinceEpoch <= time_now.millisecondsSinceEpoch) {
-    //   //   await storage.delete(key: 'username');
-    //   //   await storage.delete(key: 'token');
-    //   //   return;
-    //   // }
-    //   var isAuth = await checkToken(token);
-    //
-    //   if (isAuth) {
-    //     setState((){});
-    //   }
-    // });
   }
 
   @override

@@ -1,4 +1,4 @@
-import 'package:admin_mobile_work_it/controllers/account_controller.dart';
+import 'package:admin_mobile_work_it/controllers/account_ctrl.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
     {'title': 'Забрать или выдать карту', 'widget': const CardForIssueOrReceive()},
   ];
 
-  var accountController = Get.find<AccountController>();
+  var accountController = Get.find<AccountCtrl>();
 
   @override
   void initState() {

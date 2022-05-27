@@ -1,45 +1,47 @@
 import 'package:admin_mobile_work_it/data/repository/account_repo.dart';
 import 'package:admin_mobile_work_it/models/models.dart';
 import 'package:admin_mobile_work_it/routes.dart';
+import 'package:admin_mobile_work_it/service/utils.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
-class AccountController extends GetxController {
+class AccountCtrl extends GetxController {
   final AccountRepo accountRepo;
   final FlutterSecureStorage fss;
 
-  AccountController({required this.accountRepo, required this.fss});
+  AccountCtrl({required this.accountRepo, required this.fss});
 
   final Account _account = Account();
+  bool isAuth = false;
 
   Future<bool> checkToken({String? token}) async {
-    token ??= await fss.read(key: 'token');
-    if (token == null) {
-      return false;
-    }
-    Response resp = await accountRepo.checkToken(token);
-    if (resp.statusCode == 200) {
-      _account.token = token;
-      return true;
-    }
-    if (resp.statusCode == 401 || resp.body == false) {
-      await logout();
+    if (token != null) {
+      Response resp = await accountRepo.checkToken(token);
+      if (resp.statusCode == 200) {
+        _account.token = token;
+        isAuth = true;
+        return true;
+      }
+      if (resp.statusCode == 401 || resp.body == false) {
+        await logout();
+      }
     }
     return false;
   }
 
   Future<bool> tryLoginIn(String username, String password) async {
+    loadingSnack();
     Response resp = await accountRepo.tryLoginIn(username, password);
+    Get.closeAllSnackbars();
     if (resp.statusCode == 200) {
       _account.token = resp.body['key'];
       _account.username = username;
       await fss.write(key: 'username', value: _account.username);
       await fss.write(key: 'token', value: _account.token);
-      await fss.read(key: 'token').then((value) {
-        print(value);
-      });
+      return true;
     }
-    return resp.statusCode == 200;
+    messageFailSnack(title: resp.body);
+    return false;
   }
 
   Future<void> logout() async {

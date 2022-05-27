@@ -1,4 +1,4 @@
-import 'package:admin_mobile_work_it/controllers/account_controller.dart';
+import 'package:admin_mobile_work_it/controllers/account_ctrl.dart';
 import 'package:admin_mobile_work_it/routes.dart';
 import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:admin_mobile_work_it/service/utils.dart';
@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Map<String?, String?> formData = {'username': null, 'password': null, 'server_ip': null};
-  var accountController = Get.find<AccountController>();
+  final AccountCtrl accountController = Get.find();
 
   @override
   void initState() {

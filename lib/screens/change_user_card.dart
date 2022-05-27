@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:admin_mobile_work_it/controllers/user_controller.dart';
+import 'package:admin_mobile_work_it/controllers/user_ctrl.dart';
 import 'package:admin_mobile_work_it/models/models.dart';
 import 'package:admin_mobile_work_it/screens/detail_user.dart';
 import 'package:admin_mobile_work_it/service/api.dart';
@@ -23,7 +23,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
   Widget customSearchBar = const Text('Сотрудники');
   Map? newCard;
   Timer? timer;
-  var userController = Get.find<UserController>();
+  var userController = Get.find<UserCtrl>();
 
   void onSearch() {
     if (customIcon.icon == Icons.search) {
@@ -116,12 +116,8 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
     NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
       var identifier = tagTransform(tag);
       var password = tagGetPassword(tag);
-      var user = await getUserByCardId(identifier);
+      await userController.getUserByCardId(identifier);
       newCard = {'card_id': identifier, 'password': password};
-      print(user);
-      if (user != null) {
-        userController.searchInList(user['full_name']);
-      }
       customIcon = const Icon(Icons.search);
       customSearchBar = const Text('Сотрудники');
       // setState(() {});
@@ -136,7 +132,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<UserController>(builder: (uc) {
+    return GetBuilder<UserCtrl>(builder: (uc) {
       List<User> users = uc.users;
       return Scaffold(
           floatingActionButton: newCard != null
