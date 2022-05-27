@@ -11,4 +11,12 @@ class UserRepo extends GetxService {
     return await apiClient.getData(uri);
   }
 
+  Future<Response> tryFireUser(String username) async {
+    return await apiClient.deleteData('$uri$username/fire_employee/');
+  }
+
+  Future<Response> tryChangeUserCard(String username, Map newCard) async {
+    return await apiClient.postData('$uri$username/swap_user_card/', newCard);
+  }
+
 }

@@ -72,29 +72,29 @@ Future<List> getUsers() async {
 
 Future<Map?> getUserByCardId(String cardId) async {
   var dio = await getDio();
-  var dialog = showLoadingDialog();
+  // var dialog = showLoadingDialog();
   try {
     var resp = await dio.get(getServerApiUrl() + 'card/$cardId/get_user_by_card_id/');
     return resp.data;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
     return null;
   } finally {
-    dialog.dismiss();
+    // dialog.dismiss();
   }
 }
 
 Future<String> tryChangeUserCard(String username, {Map? newCard}) async {
   var dio = await getDio();
-  var dialog = showLoadingDialog();
+  // var dialog = showLoadingDialog();
   try {
     var resp = await dio.post(getServerApiUrl() + 'account/$username/swap_user_card/', data: newCard);
     return resp.data;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
     return Future.error(e);
   } finally {
-    dialog.dismiss();
+    // dialog.dismiss();
   }
 }
 

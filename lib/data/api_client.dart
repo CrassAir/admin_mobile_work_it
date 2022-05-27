@@ -11,12 +11,6 @@ class ApiClient extends GetConnect implements GetxService {
     baseUrl = appBaseUrl;
     timeout = const Duration(seconds: 1);
     _mainHeaders = {'Content-type': 'application/json;'};
-
-    // _flutterSecureStorage.read(key: 'token').then((token) {
-    //   if (token != null) {
-    //     _mainHeaders = {'Content-type': 'application/json; charset=UTF-8', 'Authorization': 'Token $token'};
-    //   }
-    // });
   }
 
   void updateHeaders(String token) {
@@ -35,6 +29,15 @@ class ApiClient extends GetConnect implements GetxService {
   Future<Response> postData(String uri, Map<dynamic, dynamic> data) async {
     try {
       Response response = await post(uri, data = data, headers: _mainHeaders);
+      return response;
+    } catch (e) {
+      return Response(statusCode: 1, statusText: e.toString());
+    }
+  }
+
+  Future<Response> deleteData(String uri) async {
+    try {
+      Response response = await delete(uri, headers: _mainHeaders);
       return response;
     } catch (e) {
       return Response(statusCode: 1, statusText: e.toString());

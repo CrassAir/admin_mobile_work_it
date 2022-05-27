@@ -4,6 +4,7 @@ import 'package:admin_mobile_work_it/screens/set_user_photo.dart';
 import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DetailUser extends StatefulWidget {
   const DetailUser({Key? key, required this.user, required this.newCard}) : super(key: key);
@@ -95,7 +96,7 @@ class _DetailUserState extends State<DetailUser> {
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.red),
                         onPressed: () =>
-                            tryFireUser(widget.user.username!).then((value) => {if (value) Navigator.pushReplacementNamed(context, '/')}),
+                            tryFireUser(widget.user.username!),
                         child: const Text('Уволить сотрудника'))),
               ],
             )

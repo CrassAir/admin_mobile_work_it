@@ -71,38 +71,38 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
     await userController.getUsers();
   }
 
-  void onChangeUserCard(String username) async {
-    var resp = await tryChangeUserCard(username, newCard: newCard);
-    if (resp.isEmpty) return;
-    await showModalBottomSheet<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 400,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(resp, style: const TextStyle(fontSize: 28)),
-                  const SizedBox(height: 50),
-                  Container(
-                      width: 120,
-                      height: 60,
-                      child: ElevatedButton(
-                          onPressed: () async {
-                            var issued = await tryChangeStatusCard(resp, 'change_status');
-                            if (issued) Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(primary: Colors.green),
-                          child: const Text('Выдать', style: TextStyle(fontSize: 20))))
-                ],
-              ),
-            ),
-          );
-        }).whenComplete(() => Timer(const Duration(milliseconds: 300), () => Navigator.pop(context)));
-  }
+  // void onChangeUserCard(String username) async {
+  //   var resp = await tryChangeUserCard(username, newCard: newCard);
+  //   if (resp.isEmpty) return;
+  //   await showModalBottomSheet<void>(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return Container(
+  //           height: 400,
+  //           child: Center(
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: <Widget>[
+  //                 Text(resp, style: const TextStyle(fontSize: 28)),
+  //                 const SizedBox(height: 50),
+  //                 Container(
+  //                     width: 120,
+  //                     height: 60,
+  //                     child: ElevatedButton(
+  //                         onPressed: () async {
+  //                           var issued = await tryChangeStatusCard(resp, 'change_status');
+  //                           if (issued) Navigator.pop(context);
+  //                         },
+  //                         style: ElevatedButton.styleFrom(primary: Colors.green),
+  //                         child: const Text('Выдать', style: TextStyle(fontSize: 20))))
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       }).whenComplete(() => Timer(const Duration(milliseconds: 300), () => Navigator.pop(context)));
+  // }
 
   @override
   void initState() {
@@ -124,7 +124,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
       }
       customIcon = const Icon(Icons.search);
       customSearchBar = const Text('Сотрудники');
-      setState(() {});
+      // setState(() {});
     });
   }
 

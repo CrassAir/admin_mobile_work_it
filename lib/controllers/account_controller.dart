@@ -12,12 +12,6 @@ class AccountController extends GetxController {
 
   final Account _account = Account();
 
-  // @override
-  // void onInit() async {
-  //   super.onInit();
-  //   await _fss.read(key: 'token').then((value) => checkToken(token: value));
-  // }
-
   Future<bool> checkToken({String? token}) async {
     token ??= await fss.read(key: 'token');
     if (token == null) {
