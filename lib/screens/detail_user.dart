@@ -22,39 +22,6 @@ class _DetailUserState extends State<DetailUser> {
       GlobalKey<SliverAnimatedListState>();
   final UserCtrl userCtrl = Get.find();
 
-  // void onChangeUserCard(String username) async {
-  //   var resp = await tryChangeUserCard(username, newCard: widget.newCard);
-  //   if (resp.isEmpty) return;
-  //   await showModalBottomSheet<void>(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Container(
-  //           height: 400,
-  //           child: Center(
-  //             child: Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: <Widget>[
-  //                 Text(resp, style: const TextStyle(fontSize: 28)),
-  //                 const SizedBox(height: 50),
-  //                 Container(
-  //                     width: 120,
-  //                     height: 60,
-  //                     child: ElevatedButton(
-  //                         onPressed: () async {
-  //                           var issued = await tryChangeStatusCard(resp, 'change_status');
-  //                           if (issued) Navigator.pop(context);
-  //                         },
-  //                         style: ElevatedButton.styleFrom(primary: Colors.green),
-  //                         child: const Text('Выдать', style: TextStyle(fontSize: 20))))
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       }).whenComplete(() => Timer(const Duration(milliseconds: 300), () => Navigator.pushReplacementNamed(context, '/')));
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +51,7 @@ class _DetailUserState extends State<DetailUser> {
                       child: const Text('AH'),
                     );
                   },
-                  openBuilder: (context, action) => SetUserPhoto()),
+                  openBuilder: (context, action) => Scaffold(body: SetUserPhoto())),
             ),
             Text(
                 widget.user.full_name!.trim().isNotEmpty

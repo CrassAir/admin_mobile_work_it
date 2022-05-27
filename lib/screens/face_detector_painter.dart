@@ -92,7 +92,6 @@ class FaceDetectorPainter extends CustomPainter {
       paintContour(FaceContourType.noseBottom);
       paintContour(FaceContourType.leftCheek);
       paintContour(FaceContourType.rightCheek);
-
     }
   }
 

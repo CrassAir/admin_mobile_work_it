@@ -26,6 +26,7 @@ class AccountCtrl extends GetxController {
         await logout();
       }
     }
+    messageFailSnack(title: 'Token is null');
     return false;
   }
 

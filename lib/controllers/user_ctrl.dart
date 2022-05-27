@@ -23,6 +23,7 @@ class UserCtrl extends GetxController {
     Response resp = await userRepo.getUsers();
     Get.closeAllSnackbars();
     if (resp.statusCode != 200) {
+      print(resp.body);
       messageFailSnack(title: resp.body);
       return;
     }
