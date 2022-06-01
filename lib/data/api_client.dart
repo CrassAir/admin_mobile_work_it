@@ -27,11 +27,11 @@ class ApiClient extends GetConnect implements GetxService {
     }
   }
 
-  Future<Response> postData(String uri, Map<dynamic, dynamic> data) async {
+  Future<Response> postData(String uri, Map<dynamic, dynamic> data, {bool useLoading = true}) async {
     try {
-      loadingSnack();
+      if(useLoading)loadingSnack();
       Response response = await post(uri, data, headers: _mainHeaders);
-      await Get.closeCurrentSnackbar();
+      if(useLoading)await Get.closeCurrentSnackbar();
       return response;
     } catch (e) {
       return Response(statusCode: 1, statusText: e.toString());

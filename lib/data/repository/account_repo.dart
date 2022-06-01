@@ -8,7 +8,7 @@ class AccountRepo extends GetxService {
   AccountRepo({required this.apiClient});
 
   Future<Response> checkToken(String token) async {
-    Response resp = await apiClient.postData('${AppConstance.API_URL}check_token/', {'token': token});
+    Response resp = await apiClient.postData('${AppConstance.API_URL}check_token/', {'token': token}, useLoading: false);
     if (resp.statusCode == 200) {
       apiClient.updateHeaders(token);
     }

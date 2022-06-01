@@ -62,8 +62,8 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       title: 'AdminWorkIt',
       debugShowCheckedModeBanner: false,
-      defaultTransition: Transition.upToDown,
-      transitionDuration: const Duration(milliseconds: 2000),
+      defaultTransition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 500),
       theme: Styles.themeData(isDarkMode, context),
       darkTheme: Styles.themeData(isDarkMode, context),
       initialRoute: RouterHelper.initial,

@@ -38,7 +38,7 @@ class AccountCtrl extends GetxController {
       await fss.write(key: 'token', value: _account.token);
       return true;
     }
-    messageSnack(title: resp.body, isSuccess: false);
+    messageSnack(title: resp.body['detail'], isSuccess: false);
     return false;
   }
 
