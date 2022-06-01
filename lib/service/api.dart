@@ -39,7 +39,7 @@ Future<bool> checkToken(String? token) async {
     var resp = await dio.post(getServerApiUrl() + 'check_token/', data: {'token': token});
     return resp.data;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
   }
   return false;
 }
@@ -48,25 +48,25 @@ Future<bool> sendNewCards(List<Map<String, String>> cards, String type) async {
   var dio = await getDio();
   try {
     await dio.post(getServerApiUrl() + 'card/', data: {'cards': cards, 'type': type});
-    showSuccessDialog('Карточки успешно добавлены');
+    // showSuccessDialog('Карточки успешно добавлены');
     return true;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
   }
   return false;
 }
 
 Future<List> getUsers() async {
   var dio = await getDio();
-  var dialog = showLoadingDialog();
+  // var dialog = showLoadingDialog();
   try {
     var resp = await dio.get(getServerApiUrl() + 'account/');
     return resp.data;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
     return Future.error(e);
   } finally {
-    dialog.dismiss();
+    // dialog.dismiss();
   }
 }
 
@@ -100,59 +100,59 @@ Future<String> tryChangeUserCard(String username, {Map? newCard}) async {
 
 Future<bool> tryChangeUserOldCard(String username, Map cardOld) async {
   var dio = await getDio();
-  var dialog = showLoadingDialog();
+  // var dialog = showLoadingDialog();
   try {
     var resp = await dio.post(getServerApiUrl() + 'account/$username/swap_user_card_for_old_card/', data: cardOld);
-    showSuccessDialog(resp.data);
+    // showSuccessDialog(resp.data);
     return true;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
     return false;
   } finally {
-    dialog.dismiss();
+    // dialog.dismiss();
   }
 }
 
 Future<bool> tryFireUser(String username) async {
   var dio = await getDio();
-  var dialog = showLoadingDialog();
+  // var dialog = showLoadingDialog();
   try {
     var resp = await dio.delete(getServerApiUrl() + 'account/$username/fire_employee/');
-    showSuccessDialog(resp.data);
+    // showSuccessDialog(resp.data);
     return true;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
     return false;
   } finally {
-    dialog.dismiss();
+    // dialog.dismiss();
   }
 }
 
 Future<List<dynamic>> getCardForIssueOrReceive() async {
   var dio = await getDio();
-  var dialog = showLoadingDialog();
+  // var dialog = showLoadingDialog();
   try {
     var resp = await dio.get(getServerApiUrl() + 'card/get_receive_or_issue/');
     return resp.data;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
     return Future.error(e);
   } finally {
-    dialog.dismiss();
+    // dialog.dismiss();
   }
 }
 
 Future<bool> tryChangeStatusCard(String cardId, String action) async {
   var dio = await getDio();
-  var dialog = showLoadingDialog();
+  // var dialog = showLoadingDialog();
   try {
     var resp = await dio.patch(getServerApiUrl() + 'card/$cardId/', data: {'action': action});
-    showSuccessDialog(resp.data);
+    // showSuccessDialog(resp.data);
     return true;
   } on DioError catch (e) {
-    showErrorDialog(e.response!.data.toString() + '\n' + e.message);
+    // showErrorDialog(e.response!.data.toString() + '\n' + e.message);
     return false;
   } finally {
-    dialog.dismiss();
+    // dialog.dismiss();
   }
 }

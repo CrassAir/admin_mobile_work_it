@@ -1,30 +1,32 @@
 import 'dart:async';
 
+import 'package:admin_mobile_work_it/controllers/card_ctrl.dart';
 import 'package:admin_mobile_work_it/data/repository/user_repo.dart';
 import 'package:admin_mobile_work_it/models/models.dart';
-import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:admin_mobile_work_it/service/utils.dart';
+import 'package:dio/dio.dart' as d;
 import 'package:get/get.dart';
 
 class UserCtrl extends GetxController {
   final UserRepo userRepo;
+  final CardCtrl cardCtrl;
 
   var timer;
 
-  UserCtrl({required this.userRepo});
+  UserCtrl({required this.userRepo, required this.cardCtrl});
 
+  User? user;
   List<User> _users = [];
   List<User> _allUsers = [];
 
   List<User> get users => _users.obs;
 
+
   Future<void> getUsers() async {
-    loadingSnack();
     Response resp = await userRepo.getUsers();
-    Get.closeAllSnackbars();
     if (resp.statusCode != 200) {
       print(resp.body);
-      messageFailSnack(title: resp.body);
+      messageSnack(title: resp.body, isSuccess: false);
       return;
     }
     _users = [];
@@ -36,45 +38,50 @@ class UserCtrl extends GetxController {
     update();
   }
 
-  Future<bool> tryFireUser(String username) async {
-    loadingSnack();
-    Response resp = await userRepo.tryFireUser(username);
-    Get.closeAllSnackbars();
+  Future<bool> tryFireUser() async {
+    timer?.cancel();
+    Response resp = await userRepo.tryFireUser(user!.username!);
+    messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
     if (resp.statusCode == 200) {
-      messageSuccessSnack(title: resp.body);
+      _users = [];
+      _allUsers.forEach((element) {
+        if (element.username!.toLowerCase() != user!.username!.toLowerCase()) {
+          _users.add(element);
+        }
+      });
+      _allUsers = _users;
+      user = null;
+      update();
     }
-    messageFailSnack(title: resp.body);
     return resp.statusCode == 200;
   }
 
-  Future<void> tryChangeUserCard(String username, Map newCard) async {
-    loadingSnack();
+  Future<bool> tryChangeUserCard(String username, Map newCard) async {
     var resp = await userRepo.tryChangeUserCard(username, newCard);
-    Get.closeAllSnackbars();
-    if (resp.statusCode != 200) {
-      messageFailSnack(title: resp.body);
-      return;
-    }
-
-    await Get.defaultDialog(
-            title: resp.body,
-            onConfirm: () async =>
-                await tryChangeStatusCard(resp.body, 'change_status'),
-            onCancel: () => Get.back())
-        .whenComplete(
-            () => Timer(const Duration(milliseconds: 10000), () => Get.back()));
+    messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
+    return resp.statusCode == 200;
   }
 
   Future<void> getUserByCardId(String cardId) async {
-    loadingSnack();
     Response resp = await userRepo.getUserByCardId(cardId);
-    Get.closeAllSnackbars();
     if (resp.statusCode != 200) {
-      messageSuccessSnack(title: 'Карта свободна!');
+      messageSnack(title: 'Карта свободна!', isSuccess: true);
       update();
       return;
     }
-    searchInList(resp.body['full_name']);
+    searchInList(resp.body['username']);
+  }
+
+  Future<void> tryUploadAvatar(String username, String filePath) async {
+    print(filePath);
+    d.Response resp = await userRepo.tryUploadAvatar(username, filePath);
+    print(resp.statusCode);
+    messageSnack(title: resp.data.toString(), isSuccess: resp.statusCode == 200);
+    update();
+  }
+
+  void selectUser(String username) {
+    user = _users.firstWhereOrNull((element) => element.username == username);
   }
 
   void searchInList(String value) {
@@ -82,7 +89,8 @@ class UserCtrl extends GetxController {
     timer = Timer(const Duration(milliseconds: 500), () {
       _users.clear();
       _allUsers.forEach((User user) {
-        if (user.full_name!.toLowerCase().contains(value.toLowerCase())) {
+        if (user.full_name!.toLowerCase().contains(value.toLowerCase()) ||
+            user.username!.toLowerCase() == value.toLowerCase()) {
           _users.add(user);
         }
       });

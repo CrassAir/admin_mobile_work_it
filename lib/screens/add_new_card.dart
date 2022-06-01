@@ -42,7 +42,7 @@ class _AddNewCardState extends State<AddNewCard> {
 
   void sendCards(String type) async {
     if (_items.isEmpty) {
-      showErrorDialog('Нельзя отправить пустой список карт');
+      // showErrorDialog('Нельзя отправить пустой список карт');
       return;
     }
     var resp = await sendNewCards(_items, type);

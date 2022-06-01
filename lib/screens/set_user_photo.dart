@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import 'package:admin_mobile_work_it/controllers/user_ctrl.dart';
 import 'package:admin_mobile_work_it/screens/face_detector_painter.dart';
 import 'package:admin_mobile_work_it/service/camera_service.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
-import 'dart:math' as math;
 
 class SetUserPhoto extends StatefulWidget {
   @override
@@ -19,7 +20,6 @@ class _SetUserPhoto extends State<SetUserPhoto> {
   ));
   bool isBusy = false;
   bool findPic = false;
-  XFile img = XFile('');
   CustomPaint? customPaint;
 
   @override
@@ -30,26 +30,13 @@ class _SetUserPhoto extends State<SetUserPhoto> {
 
   @override
   Widget build(BuildContext context) {
-    if (img.path != '') {
-      return Scaffold(
-        appBar: AppBar(),
-        body: Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.rotationY(math.pi),
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(fit: BoxFit.cover, image: Image.file(File(img.path)).image, scale: 1),
-            ),
-          ),
-        ),
-      );
-    }
     return CameraView(
       customPaint: customPaint,
       onImage: (inputImage, cont) {
         processImage(inputImage, cont);
       },
-      initialDirection: CameraLensDirection.front,
+      onResume: findPic,
+      initialDirection: CameraLensDirection.back,
     );
   }
 
@@ -63,15 +50,14 @@ class _SetUserPhoto extends State<SetUserPhoto> {
       customPaint = CustomPaint(painter: painter);
       if (faces.isNotEmpty) {
         print(faces[0].boundingBox);
-        if (faces[0].boundingBox.left <= 40.0 &&
-            faces[0].boundingBox.top <= 260.0 &&
-            faces[0].boundingBox.right >= 650.0) {
+        // Rect.fromLTRB(154.0, 349.0, 570.0, 773.0)
+        if (faces[0].boundingBox.right - faces[0].boundingBox.left >= 420 && faces[0].boundingBox.top <= 300.0) {
           try {
             findPic = true;
             await controller.stopImageStream();
             var imgFile = await controller.takePicture();
-            img = imgFile;
             setState(() {});
+            await Get.to(() => SetPhoto(xfile: imgFile))?.then((value) => setState(() => findPic = false));
           } catch (e) {
             print(e);
           }
@@ -84,5 +70,44 @@ class _SetUserPhoto extends State<SetUserPhoto> {
     if (mounted) {
       setState(() {});
     }
+  }
+}
+
+class SetPhoto extends StatelessWidget {
+  final XFile xfile;
+  final UserCtrl userCtrl = Get.find();
+
+  SetPhoto({Key? key, required this.xfile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text('Фото')),
+        body: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          // Transform(
+          //   alignment: Alignment.center,
+          //   transform: Matrix4.rotationY(math.pi),
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(fit: BoxFit.cover, image: Image.file(File(xfile.path)).image, scale: 1),
+            ),
+          ),
+          // ),
+          Padding(
+              padding: const EdgeInsets.only(bottom: 40.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(onPressed: () {
+                    userCtrl.tryUploadAvatar(userCtrl.user!.username!, xfile.path);
+                    Navigator.pop(context);
+                  }, child: const Text('Принять')),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.red),
+                      onPressed: () => Get.back(),
+                      child: const Text('Отменить')),
+                ],
+              )),
+        ]));
   }
 }

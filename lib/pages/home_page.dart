@@ -1,11 +1,11 @@
 import 'package:admin_mobile_work_it/controllers/account_ctrl.dart';
+import 'package:admin_mobile_work_it/screens/add_new_card.dart';
+import 'package:admin_mobile_work_it/screens/card_for_issue_or_receive.dart';
+import 'package:admin_mobile_work_it/screens/change_user_card.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import '../screens/add_new_card.dart';
-import '../screens/card_for_issue_or_receive.dart';
-import '../screens/change_user_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

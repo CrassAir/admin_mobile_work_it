@@ -26,14 +26,11 @@ class AccountCtrl extends GetxController {
         await logout();
       }
     }
-    messageFailSnack(title: 'Token is null');
     return false;
   }
 
   Future<bool> tryLoginIn(String username, String password) async {
-    loadingSnack();
     Response resp = await accountRepo.tryLoginIn(username, password);
-    Get.closeAllSnackbars();
     if (resp.statusCode == 200) {
       _account.token = resp.body['key'];
       _account.username = username;
@@ -41,7 +38,7 @@ class AccountCtrl extends GetxController {
       await fss.write(key: 'token', value: _account.token);
       return true;
     }
-    messageFailSnack(title: resp.body);
+    messageSnack(title: resp.body, isSuccess: false);
     return false;
   }
 

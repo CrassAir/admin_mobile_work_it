@@ -5,10 +5,6 @@ class AnimatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return Center(child: Image.asset('assets/rabota.jpg'));
   }
 }

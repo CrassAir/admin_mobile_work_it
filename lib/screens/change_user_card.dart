@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:admin_mobile_work_it/controllers/user_ctrl.dart';
 import 'package:admin_mobile_work_it/models/models.dart';
 import 'package:admin_mobile_work_it/screens/detail_user.dart';
-import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:admin_mobile_work_it/service/utils.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
@@ -59,16 +58,15 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
         ),
       );
     } else {
-      customIcon = const Icon(Icons.search);
-      customSearchBar = const Text('Сотрудники');
-      _editingController.clear();
       userController.searchInList('');
+      clearSearch();
     }
     setState(() {});
   }
 
   Future onRefresh() async {
     await userController.getUsers();
+    clearSearch();
   }
 
   // void onChangeUserCard(String username) async {
@@ -122,6 +120,12 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
       customSearchBar = const Text('Сотрудники');
       // setState(() {});
     });
+  }
+
+  void clearSearch() {
+    customIcon = const Icon(Icons.search);
+    customSearchBar = const Text('Сотрудники');
+    _editingController.clear();
   }
 
   @override
@@ -179,7 +183,11 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
                                         newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
                                   );
                                 },
-                                openBuilder: (context, action) => DetailUser(user: users[index], newCard: newCard)),
+                                openBuilder: (context, action) {
+                                  clearSearch();
+                                  userController.selectUser(users[index].username!);
+                                  return DetailUser(newCard: newCard);
+                                }),
                             //   ExpansionTile(
                             //       key: UniqueKey(),
                             //       // leading: const Icon(Icons.account_circle),

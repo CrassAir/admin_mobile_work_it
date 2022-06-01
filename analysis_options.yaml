@@ -2,7 +2,7 @@ include: package:pedantic/analysis_options.1.11.0.yaml
 
 analyzer:
   exclude:
-    - "android/app"
+    - "android"
 #  strong-mode:
 #    implicit-casts: false
 #    implicit-dynamic: false

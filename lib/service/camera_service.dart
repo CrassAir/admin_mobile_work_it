@@ -10,11 +10,16 @@ enum ScreenMode { liveFeed, gallery }
 
 class CameraView extends StatefulWidget {
   CameraView(
-      {Key? key, required this.customPaint, required this.onImage, this.initialDirection = CameraLensDirection.back})
+      {Key? key,
+      required this.customPaint,
+      required this.onImage,
+      this.initialDirection = CameraLensDirection.back,
+      this.onResume})
       : super(key: key);
 
   final CustomPaint? customPaint;
   final Function(InputImage inputImage, CameraController controller) onImage;
+  final bool? onResume;
   final CameraLensDirection initialDirection;
 
   @override
@@ -29,7 +34,6 @@ class _CameraViewState extends State<CameraView> {
   @override
   void initState() {
     super.initState();
-
     for (var i = 0; i < cameras.length; i++) {
       if (cameras[i].lensDirection == widget.initialDirection) {
         _cameraIndex = i;
@@ -46,6 +50,10 @@ class _CameraViewState extends State<CameraView> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.onResume == true && _controller?.value.isStreamingImages == false) {
+      _controller?.startImageStream(_processCameraImage);
+      setState(() {});
+    }
     return Scaffold(
       appBar: AppBar(),
       body: _liveFeedBody(),

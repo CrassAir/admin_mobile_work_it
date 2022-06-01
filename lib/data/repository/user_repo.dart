@@ -1,6 +1,6 @@
 import 'package:admin_mobile_work_it/constance.dart';
 import 'package:admin_mobile_work_it/data/api_client.dart';
-import 'package:admin_mobile_work_it/service/utils.dart';
+import 'package:dio/dio.dart' as d;
 import 'package:get/get.dart';
 
 class UserRepo extends GetxService {
@@ -25,5 +25,9 @@ class UserRepo extends GetxService {
   Future<Response> getUserByCardId(String cardId) async {
     return await apiClient
         .getData('${AppConstance.CARD_URL}$cardId/get_user_by_card_id/');
+  }
+
+  Future<d.Response> tryUploadAvatar(String username, String filePath) async {
+    return await apiClient.uploadFile('${AppConstance.ACCOUNT_URL}$username/upload_avatar/', filePath);
   }
 }
