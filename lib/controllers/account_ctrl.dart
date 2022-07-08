@@ -42,6 +42,19 @@ class AccountCtrl extends GetxController {
     return false;
   }
 
+  Future<bool> tryLoginInByCard(String identifier, String password) async {
+    Response resp = await accountRepo.tryLoginInByIdentifier(identifier, password);
+    if (resp.statusCode == 200) {
+      _account.token = resp.body['key'];
+      _account.username = resp.body['username'];
+      await fss.write(key: 'username', value: _account.username);
+      await fss.write(key: 'token', value: _account.token);
+      return true;
+    }
+    messageSnack(title: resp.body['detail'], isSuccess: false);
+    return false;
+  }
+
   Future<void> logout() async {
     await fss.delete(key: 'username');
     await fss.delete(key: 'token');

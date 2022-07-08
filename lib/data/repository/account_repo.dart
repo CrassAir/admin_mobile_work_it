@@ -17,7 +17,16 @@ class AccountRepo extends GetxService {
 
   Future<Response> tryLoginIn(String username, String password) async {
     Response resp = await apiClient
-        .postData('rest-auth/login/', {'username': username, 'password': password, 'source': 'admin_app'});
+        .postData('rest-auth/login/', {'username': username, 'password': password, 'source': 'admin_app'}, withAuth: false);
+    if (resp.statusCode == 200) {
+      apiClient.updateHeaders(resp.body['key']);
+    }
+    return resp;
+  }
+
+  Future<Response> tryLoginInByIdentifier(String identifier, String password) async {
+    Response resp = await apiClient
+        .postData('rest-auth/login/', {'identifier': identifier, 'password': password, 'source': 'admin_app'}, withAuth: false);
     if (resp.statusCode == 200) {
       apiClient.updateHeaders(resp.body['key']);
     }

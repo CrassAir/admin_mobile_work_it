@@ -23,7 +23,8 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
       var identifier = tagTransform(tag);
-      await accountController.tryLoginIn(identifier, '3223');
+      var password = tagGetPassword(tag);
+      await accountController.tryLoginInByCard(identifier, password);
       // StoreProvider.dispatch(context, TryAuth(username: identifier, password: '3223'));
       setState(() {});
     });
