@@ -1,7 +1,4 @@
-import 'dart:async';
 import 'package:admin_mobile_work_it/controllers/user_ctrl.dart';
-import 'package:admin_mobile_work_it/screens/set_user_photo.dart';
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -38,19 +35,7 @@ class _DetailUserState extends State<DetailUser> {
         initialItemCount: 1,
         itemBuilder: (BuildContext context, int index, Animation<double> animation) => Card(
           child: Column(children: [
-            Center(
-              child: OpenContainer(
-                  openColor: Theme.of(context).cardColor,
-                  closedColor: Theme.of(context).cardColor,
-                  closedBuilder: (context, action) {
-                    return CircleAvatar(
-                      radius: 200,
-                      backgroundColor: Colors.brown.shade800,
-                      child: const Text('AH'),
-                    );
-                  },
-                  openBuilder: (context, action) => Scaffold(body: SetUserPhoto())),
-            ),
+            CircleAvatar(radius: 200, backgroundColor: Colors.brown.shade800, child: const Text('AH')),
             Text(username, style: const TextStyle(fontSize: 40)),
             Text(widget.newCard != null ? 'Карточка для замены -> ${widget.newCard?['card_id']}' : '',
                 style: const TextStyle(fontSize: 20)),
