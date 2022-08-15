@@ -44,8 +44,10 @@ class _MyAppState extends State<MyApp> {
   void tryAuth() async {
     for (int i = 0; i < 3; i++) {
       String? token = await storage.read(key: 'token');
+      String? server_ip = await storage.read(key: 'server_ip');
+      // print(server_ip);
       if (token != null) {
-        bool isAuth = await accountCtrl.checkToken(token: token);
+        bool isAuth = await accountCtrl.checkToken(token: token, server_ip: server_ip);
         if (isAuth) {
           await Get.offNamed(RouterHelper.home);
           return;

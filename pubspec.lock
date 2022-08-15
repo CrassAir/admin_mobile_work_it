@@ -121,7 +121,7 @@ packages:
       name: cupertino_icons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.4"
+    version: "1.0.5"
   dio:
     dependency: "direct main"
     description:
@@ -161,7 +161,7 @@ packages:
       name: flutter_plugin_android_lifecycle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.6"
+    version: "2.0.7"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -294,10 +294,10 @@ packages:
   nfc_manager:
     dependency: "direct main"
     description:
-      name: nfc_manager
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.1.1"
+      path: "nfc_manager-3.1.0"
+      relative: true
+    source: path
+    version: "3.1.0"
   path:
     dependency: transitive
     description:

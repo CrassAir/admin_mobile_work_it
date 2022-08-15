@@ -22,47 +22,48 @@ class _DetailUserState extends State<DetailUser> {
       username = userCtrl.user!.full_name!.trim().isNotEmpty ? userCtrl.user!.full_name! : userCtrl.user!.username!;
     }
     return Scaffold(
-        body: CustomScrollView(slivers: <Widget>[
-      const SliverAppBar(
-        expandedHeight: 50.0,
-        flexibleSpace: FlexibleSpaceBar(
-          title: Text('Профиль'),
-          background: FlutterLogo(),
+      body: CustomScrollView(slivers: <Widget>[
+        const SliverAppBar(
+          expandedHeight: 50.0,
+          flexibleSpace: FlexibleSpaceBar(
+            title: Text('Профиль'),
+            background: FlutterLogo(),
+          ),
         ),
-      ),
-      SliverAnimatedList(
-        key: _key,
-        initialItemCount: 1,
-        itemBuilder: (BuildContext context, int index, Animation<double> animation) => Card(
-          child: Column(children: [
-            CircleAvatar(radius: 200, backgroundColor: Colors.brown.shade800, child: const Text('AH')),
-            Text(username, style: const TextStyle(fontSize: 40)),
-            Text(widget.newCard != null ? 'Карточка для замены -> ${widget.newCard?['card_id']}' : '',
-                style: const TextStyle(fontSize: 20)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                    width: 150,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: widget.newCard == null ? Colors.grey : Colors.green),
-                        onPressed: widget.newCard == null
-                            ? null
-                            : () => userCtrl
-                                .tryChangeUserCard(userCtrl.user!.username!, widget.newCard!)
-                                .then((_) => Navigator.pop(context)),
-                        child: const Text('Поменять карту'))),
-                Container(
-                    width: 150,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.red),
-                        onPressed: () => userCtrl.tryFireUser().then((_) => Navigator.pop(context)),
-                        child: const Text('Уволить сотрудника'))),
-              ],
-            )
-          ]),
-        ),
-      )
-    ]));
+        SliverAnimatedList(
+          key: _key,
+          initialItemCount: 1,
+          itemBuilder: (BuildContext context, int index, Animation<double> animation) => Card(
+            child: Column(children: [
+              CircleAvatar(radius: 200, backgroundColor: Colors.brown.shade800, child: const Text('AH')),
+              Text(username, style: const TextStyle(fontSize: 40)),
+              Text(widget.newCard != null ? 'Карточка для замены -> ${widget.newCard?['card_id']}' : '',
+                  style: const TextStyle(fontSize: 20)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                      width: 150,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(primary: widget.newCard == null ? Colors.grey : Colors.green),
+                          onPressed: widget.newCard == null
+                              ? null
+                              : () => userCtrl
+                                  .tryChangeUserCard(userCtrl.user!.username!, widget.newCard!)
+                                  .then((_) => Navigator.pop(context)),
+                          child: const Text('Поменять карту'))),
+                  Container(
+                      width: 150,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(primary: Colors.red),
+                          onPressed: () => userCtrl.tryFireUser().then((_) => Navigator.pop(context)),
+                          child: const Text('Уволить сотрудника'))),
+                ],
+              )
+            ]),
+          ),
+        )
+      ]),
+    );
   }
 }

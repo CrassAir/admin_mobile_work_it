@@ -26,7 +26,9 @@ dependencies:
   pedantic: ^1.11.0
   flutter_secure_storage: ^5.0.2
   dio: ^4.0.0
-  nfc_manager: ^3.1.0
+#  nfc_manager: ^3.1.1
+  nfc_manager:
+    path: nfc_manager-3.1.0
 #  overlay_support: ^1.2.1
   flutter_slidable: ^0.6.0
   flutter_local_notifications: ^5.0.0+4

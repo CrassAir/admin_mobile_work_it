@@ -19,6 +19,7 @@ class RouterHelper {
     GetPage(
       name: initial,
       page: () => const AnimatePage(),
+      transition: Transition.noTransition,
     ),
   ];
 }

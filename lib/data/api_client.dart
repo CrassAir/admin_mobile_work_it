@@ -10,10 +10,15 @@ class ApiClient extends GetConnect implements GetxService {
     baseUrl = appBaseUrl;
     timeout = const Duration(seconds: 1);
     _mainHeaders = {'Content-type': 'application/json;'};
+    print(baseUrl);
   }
 
   void updateHeaders(String token) {
     _mainHeaders = {'Content-type': 'application/json', 'Authorization': 'Token $token'};
+  }
+
+  void updateBaseUrl(String url) {
+    httpClient.baseUrl = url;
   }
 
   Future<Response> getData(String uri) async {
@@ -27,10 +32,11 @@ class ApiClient extends GetConnect implements GetxService {
     }
   }
 
-  Future<Response> postData(String uri, Map<dynamic, dynamic> data, {bool useLoading = true, bool withAuth = true}) async {
+  Future<Response> postData(String uri, Map<dynamic, dynamic> data, {bool useLoading = true, bool withAuth = true, String newUrl = ''}) async {
     try {
       if(useLoading)loadingSnack();
       Response response = await post(uri, data, headers: withAuth ? _mainHeaders : {'Content-type': 'application/json'});
+      print(response.request?.url);
       if(useLoading)await Get.closeCurrentSnackbar();
       return response;
     } catch (e) {

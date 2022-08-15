@@ -106,16 +106,13 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
   void initState() {
     super.initState();
     userController.getUsers();
-    // getUsers().then((value) {
-    //   allItems.addAll(value);
-    //   _items.addAll(value);
-    //   setState(() {});
-    // });
     NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
       var identifier = tagTransform(tag);
       var password = tagGetPassword(tag);
-      await userController.getUserByCardId(identifier);
-      newCard = {'card_id': identifier, 'password': password};
+      bool can_be_issued = await userController.getUserByCardId(identifier);
+      if (can_be_issued) {
+        newCard = {'card_id': identifier, 'password': password};
+      }
       customIcon = const Icon(Icons.search);
       customSearchBar = const Text('Сотрудники');
       // setState(() {});
@@ -139,86 +136,79 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
     return GetBuilder<UserCtrl>(builder: (uc) {
       List<User> users = uc.users;
       return Scaffold(
-          floatingActionButton: newCard != null
-              ? FloatingActionButton(
-                  backgroundColor: Colors.red,
-                  onPressed: () => setState(() {
-                        newCard = null;
-                        userController.searchInList('');
-                      }),
-                  child: const Icon(Icons.close))
-              : null,
-          body: RefreshIndicator(
-            onRefresh: onRefresh,
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverAppBar(
-                  expandedHeight: 50.0,
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: customSearchBar,
-                    background: const FlutterLogo(),
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: onSearch,
-                      icon: customIcon,
-                    )
-                  ],
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: newCard != null
+            ? FloatingActionButton(
+                backgroundColor: Colors.red,
+                onPressed: () => setState(() {
+                      newCard = null;
+                      userController.searchInList('');
+                    }),
+                child: const Icon(Icons.close))
+            : null,
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                expandedHeight: 50.0,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: customSearchBar,
+                  background: const FlutterLogo(),
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) => Card(
-                            child: OpenContainer(
-                                openColor: Theme.of(context).cardColor,
-                                closedColor: Theme.of(context).cardColor,
-                                closedBuilder: (context, action) {
-                                  return ListTile(
-                                    tileColor: Theme.of(context).cardColor,
-                                    title: Text(
-                                        users[index].full_name!.trim().isNotEmpty
-                                            ? users[index].full_name!
-                                            : users[index].username!,
-                                        style: const TextStyle(fontSize: 24)),
-                                    subtitle:
-                                        newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
-                                  );
-                                },
-                                openBuilder: (context, action) {
-                                  clearSearch();
-                                  userController.selectUser(users[index].username!);
-                                  return DetailUser(newCard: newCard);
-                                }),
-                            //   ExpansionTile(
-                            //       key: UniqueKey(),
-                            //       // leading: const Icon(Icons.account_circle),
-                            //       title: Text(
-                            //           _items[index]['full_name'].trim().isNotEmpty
-                            //               ? _items[index]['full_name']
-                            //               : _items[index]['username'],
-                            //           style: const TextStyle(fontSize: 24)),
-                            //       subtitle: newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
-                            //       childrenPadding: const EdgeInsets.symmetric(horizontal: 20),
-                            //       children: <Widget>[
-                            //         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                            //           Container(
-                            //               width: 150,
-                            //               child: ElevatedButton(
-                            //                   onPressed: () => onChangeUserCard(_items[index]['username']),
-                            //                   child: const Text('Поменять карту'))),
-                            //           Container(
-                            //               width: 150,
-                            //               child: ElevatedButton(
-                            //                   style: ElevatedButton.styleFrom(primary: Colors.red),
-                            //                   onPressed: () => tryFireUser(_items[index]['username']).then((value) => {if (value) Navigator.pop(context)}),
-                            //                   child: const Text('Уволить сотрудника'))),
-                            //         ])
-                            //       ]),
-                          ),
-                      childCount: users.length),
-                )
-              ],
+                actions: [
+                  IconButton(
+                    onPressed: onSearch,
+                    icon: customIcon,
+                  )
+                ],
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) => Card(
+                          child: OpenContainer(
+                              openColor: Theme.of(context).cardColor,
+                              closedColor: Theme.of(context).cardColor,
+                              closedBuilder: (context, action) {
+                                return ListTile(
+                                  tileColor: Theme.of(context).cardColor,
+                                  title: Text(
+                                      users[index].full_name!.trim().isNotEmpty
+                                          ? users[index].full_name!
+                                          : users[index].username!,
+                                      style: const TextStyle(fontSize: 24)),
+                                  // subtitle:
+                                  //     newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
+                                );
+                              },
+                              openBuilder: (context, action) {
+                                clearSearch();
+                                userController.selectUser(users[index].username!);
+                                return DetailUser(newCard: newCard);
+                              }),
+                        ),
+                    childCount: users.length),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 4.0,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: newCard != null ? 60.0 : 0.0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Center(
+                  child: Text(
+                newCard != null ? newCard!['card_id'] : '',
+                style: const TextStyle(color: Colors.white70, fontSize: 30),
+              )),
             ),
-          ));
+          ),
+        ),
+      );
     });
   }
 }

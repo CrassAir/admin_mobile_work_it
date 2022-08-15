@@ -21,15 +21,14 @@ class UserCtrl extends GetxController {
 
   List<User> get users => _users.obs;
 
-
   Future<void> getUsers() async {
+    _users = [];
     Response resp = await userRepo.getUsers();
     if (resp.statusCode != 200) {
       print(resp.body);
-      messageSnack(title: resp.body, isSuccess: false);
+      if (resp.body != null) messageSnack(title: resp.body, isSuccess: false);
       return;
     }
-    _users = [];
     _allUsers = [];
     resp.body?.forEach((val) {
       _allUsers.add(User.fromJson(val));
@@ -41,7 +40,7 @@ class UserCtrl extends GetxController {
   Future<bool> tryFireUser() async {
     timer?.cancel();
     Response resp = await userRepo.tryFireUser(user!.username!);
-    messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
+    if (resp.body != null) messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
     if (resp.statusCode == 200) {
       _users = [];
       _allUsers.forEach((element) {
@@ -58,24 +57,36 @@ class UserCtrl extends GetxController {
 
   Future<bool> tryChangeUserCard(String username, Map newCard) async {
     var resp = await userRepo.tryChangeUserCard(username, newCard);
-    messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
+    if (resp.body != null) messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
     return resp.statusCode == 200;
   }
 
-  Future<void> getUserByCardId(String cardId) async {
+  Future<bool> getUserByCardId(String cardId) async {
     Response resp = await userRepo.getUserByCardId(cardId);
     if (resp.statusCode != 200) {
       messageSnack(title: 'Карта свободна!', isSuccess: true);
+      _users = [..._allUsers];
+      print(_users.length);
+      print(_allUsers.length);
       update();
-      return;
+      return true;
     }
-    searchInList(resp.body['username']);
+    String find_user = resp.body['username'];
+    for (var user in _allUsers) {
+      if (user.username!.toLowerCase() == find_user.toLowerCase()) {
+        _users.clear();
+        _users.add(user);
+        update();
+        return true;
+      }
+    }
+    messageSnack(title: 'Данная карта принадлежит $find_user, ее нельзя использовать для выдачи!', isSuccess: false);
+    return false;
   }
 
   Future<void> tryUploadAvatar(String username, String filePath) async {
     print(filePath);
     d.Response resp = await userRepo.tryUploadAvatar(username, filePath);
-    print(resp.statusCode);
     messageSnack(title: resp.data.toString(), isSuccess: resp.statusCode == 200);
     update();
   }
@@ -94,6 +105,9 @@ class UserCtrl extends GetxController {
           _users.add(user);
         }
       });
+      if (_users.isEmpty) {
+        _users = _allUsers;
+      }
       update();
     });
   }

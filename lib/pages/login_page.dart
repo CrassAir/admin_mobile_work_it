@@ -1,7 +1,8 @@
+import 'package:admin_mobile_work_it/constance.dart';
 import 'package:admin_mobile_work_it/controllers/account_ctrl.dart';
+import 'package:admin_mobile_work_it/data/api_client.dart';
 import 'package:admin_mobile_work_it/routes.dart';
 import 'package:admin_mobile_work_it/service/api.dart';
-import 'package:admin_mobile_work_it/service/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nfc_manager/nfc_manager.dart';
@@ -17,17 +18,20 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Map<String?, String?> formData = {'username': null, 'password': null, 'server_ip': null};
   final AccountCtrl accountController = Get.find();
+  final ApiClient apiClient = Get.find();
+  String _server_ip = '';
 
   @override
   void initState() {
     super.initState();
-    NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
-      var identifier = tagTransform(tag);
-      var password = tagGetPassword(tag);
-      await accountController.tryLoginInByCard(identifier, password);
-      // StoreProvider.dispatch(context, TryAuth(username: identifier, password: '3223'));
-      setState(() {});
-    });
+    _server_ip = apiClient.baseUrl != null ? apiClient.baseUrl!.split('//')[1] : AppConstance.APP_URL;
+    // NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
+    //   var identifier = tagTransform(tag);
+    //   var password = tagGetPassword(tag);
+    //   await accountController.tryLoginInByCard(identifier, password);
+    //   // StoreProvider.dispatch(context, TryAuth(username: identifier, password: '3223'));
+    //   setState(() {});
+    // });
   }
 
   @override
@@ -102,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 10,
                 ),
                 TextFormField(
-                  initialValue: SERVER_IP,
+                  initialValue: _server_ip,
                   decoration: const InputDecoration(
                       hintText: 'Сервер',
                       border: OutlineInputBorder(
@@ -133,12 +137,13 @@ class _LoginPageState extends State<LoginPage> {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
                           SERVER_IP = formData['server_ip']!;
-                          accountController.tryLoginIn(formData['username']!, formData['password']!).then((value) {
+                          accountController
+                              .tryLoginIn(formData['username']!, formData['password']!, SERVER_IP)
+                              .then((value) {
                             if (value) {
                               Get.offAndToNamed(RouterHelper.home);
                             }
                           });
-                          // vm.tryAuth(username: formData['username'], password: formData['password']);
                         }
                       },
                       child: const Text(

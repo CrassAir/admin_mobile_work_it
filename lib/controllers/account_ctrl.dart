@@ -14,9 +14,9 @@ class AccountCtrl extends GetxController {
   final Account _account = Account();
   bool isAuth = false;
 
-  Future<bool> checkToken({String? token}) async {
-    if (token != null) {
-      Response resp = await accountRepo.checkToken(token);
+  Future<bool> checkToken({String? token, String? server_ip}) async {
+    if (token != null && server_ip != null) {
+      Response resp = await accountRepo.checkToken(token, server_ip);
       if (resp.statusCode == 200) {
         _account.token = token;
         isAuth = true;
@@ -29,31 +29,37 @@ class AccountCtrl extends GetxController {
     return false;
   }
 
-  Future<bool> tryLoginIn(String username, String password) async {
-    Response resp = await accountRepo.tryLoginIn(username, password);
+  Future<bool> tryLoginIn(String username, String password, String server_ip) async {
+    String _server_ip = 'https://$server_ip';
+    if (int.tryParse(server_ip[0]) != null) {
+      _server_ip = 'http://$server_ip';
+    }
+    Response resp = await accountRepo.tryLoginIn(username, password, _server_ip);
     if (resp.statusCode == 200) {
       _account.token = resp.body['key'];
       _account.username = username;
       await fss.write(key: 'username', value: _account.username);
       await fss.write(key: 'token', value: _account.token);
+      await fss.write(key: 'server_ip', value: _server_ip);
       return true;
     }
-    messageSnack(title: resp.body['detail'], isSuccess: false);
+    if (resp.body != null) messageSnack(title: resp.body['detail'], isSuccess: false);
     return false;
   }
 
-  Future<bool> tryLoginInByCard(String identifier, String password) async {
-    Response resp = await accountRepo.tryLoginInByIdentifier(identifier, password);
-    if (resp.statusCode == 200) {
-      _account.token = resp.body['key'];
-      _account.username = resp.body['username'];
-      await fss.write(key: 'username', value: _account.username);
-      await fss.write(key: 'token', value: _account.token);
-      return true;
-    }
-    messageSnack(title: resp.body['detail'], isSuccess: false);
-    return false;
-  }
+  // Future<bool> tryLoginInByCard(String identifier, String password) async {
+  //   Response resp = await accountRepo.tryLoginIn('', password, identifier: identifier);
+  //   if (resp.statusCode == 200) {
+  //     _account.token = resp.body['key'];
+  //     _account.username = resp.body['username'];
+  //     print(resp.body);
+  //     await fss.write(key: 'username', value: _account.username);
+  //     await fss.write(key: 'token', value: _account.token);
+  //     return true;
+  //   }
+  //   // messageSnack(title: resp.body['detail'], isSuccess: false);
+  //   return false;
+  // }
 
   Future<void> logout() async {
     await fss.delete(key: 'username');
