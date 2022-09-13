@@ -22,14 +22,13 @@ class UserCtrl extends GetxController {
   List<User> get users => _users.obs;
 
   Future<void> getUsers() async {
-    _users = [];
+    _users.clear();
     Response resp = await userRepo.getUsers();
     if (resp.statusCode != 200) {
-      print(resp.body);
       if (resp.body != null) messageSnack(title: resp.body, isSuccess: false);
       return;
     }
-    _allUsers = [];
+    _allUsers.clear();
     resp.body?.forEach((val) {
       _allUsers.add(User.fromJson(val));
       _users.add(User.fromJson(val));
@@ -42,13 +41,13 @@ class UserCtrl extends GetxController {
     Response resp = await userRepo.tryFireUser(user!.username!);
     if (resp.body != null) messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
     if (resp.statusCode == 200) {
-      _users = [];
+      _users.clear();
       _allUsers.forEach((element) {
         if (element.username!.toLowerCase() != user!.username!.toLowerCase()) {
           _users.add(element);
         }
       });
-      _allUsers = _users;
+      _allUsers = [..._users];
       user = null;
       update();
     }
@@ -66,8 +65,6 @@ class UserCtrl extends GetxController {
     if (resp.statusCode != 200) {
       messageSnack(title: 'Карта свободна!', isSuccess: true);
       _users = [..._allUsers];
-      print(_users.length);
-      print(_allUsers.length);
       update();
       return true;
     }
@@ -106,7 +103,7 @@ class UserCtrl extends GetxController {
         }
       });
       if (_users.isEmpty) {
-        _users = _allUsers;
+        _users = [..._allUsers];
       }
       update();
     });
