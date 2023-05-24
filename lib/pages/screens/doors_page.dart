@@ -24,11 +24,12 @@ class _DoorsPageState extends State<DoorsPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          const SliverAppBar(
+          SliverAppBar(
             expandedHeight: 50.0,
+            backgroundColor: Theme.of(context).canvasColor,
             floating: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text('Двери'),
+              title: Text('Двери', style: Theme.of(context).textTheme.titleLarge,),
             ),
           ),
           Obx(

@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:admin_mobile_work_it/pages/screens/detail_user.dart';
 import 'package:admin_mobile_work_it/store/controllers/user_ctrl.dart';
 import 'package:admin_mobile_work_it/store/models.dart';
 import 'package:admin_mobile_work_it/service/utils.dart';
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 
@@ -19,48 +18,19 @@ class ChangeOrDeactivateUserCard extends StatefulWidget {
 class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard> {
   final TextEditingController _editingController = TextEditingController();
   Icon customIcon = const Icon(Icons.search);
-  Widget customSearchBar = const Text('Сотрудники');
+  bool search = false;
   Map<String, dynamic>? newCard;
   Timer? timer;
   UserCtrl userCtrl = Get.put(UserCtrl());
 
   void onSearch() {
-    if (customIcon.icon == Icons.search) {
+    if (!search) {
       customIcon = const Icon(Icons.cancel);
-      customSearchBar = Align(
-        alignment: Alignment.bottomLeft,
-        child: Container(
-          alignment: Alignment.center,
-          width: 250,
-          height: 30,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 5),
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _editingController,
-                      autofocus: true,
-                      onChanged: userCtrl.searchInList,
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ]),
-          ),
-        ),
-      );
     } else {
       userCtrl.searchInList('');
       clearSearch();
     }
+    search = !search;
     setState(() {});
   }
 
@@ -114,14 +84,12 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
         newCard = {'card_id': identifier, 'password': password};
       }
       customIcon = const Icon(Icons.search);
-      customSearchBar = const Text('Сотрудники');
       // setState(() {});
     });
   }
 
   void clearSearch() {
     customIcon = const Icon(Icons.search);
-    customSearchBar = const Text('Сотрудники');
     _editingController.clear();
   }
 
@@ -135,81 +103,133 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
   Widget build(BuildContext context) {
     return GetBuilder<UserCtrl>(builder: (uc) {
       List<User> users = uc.users;
-      return SafeArea(
-        child: Scaffold(
-          backgroundColor: Theme.of(context).canvasColor,
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-          floatingActionButton: newCard != null
-              ? FloatingActionButton(
-                  backgroundColor: Colors.red,
-                  onPressed: () => setState(() {
-                        newCard = null;
-                        userCtrl.searchInList('');
-                      }),
-                  child: const Icon(Icons.close))
-              : null,
-          body: RefreshIndicator(
-            onRefresh: onRefresh,
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverAppBar(
-                  expandedHeight: 50.0,
-                  floating: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: customSearchBar,
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: onSearch,
-                      icon: customIcon,
-                    )
-                  ],
-                ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) => Card(
-                            child: OpenContainer(
-                                openColor: Theme.of(context).cardColor,
-                                closedColor: Theme.of(context).cardColor,
-                                closedBuilder: (context, action) {
-                                  return ListTile(
-                                    tileColor: Theme.of(context).cardColor,
-                                    title: Text(
-                                        users[index].full_name!.trim().isNotEmpty
-                                            ? users[index].full_name!
-                                            : users[index].username!,
-                                        style: Theme.of(context).textTheme.titleLarge),
-                                    // subtitle:
-                                    //     newCard != null ? Text('Карточка для замены -> ${newCard!['card_id']}') : null,
-                                  );
-                                },
-                                openBuilder: (context, action) {
-                                  clearSearch();
-                                  userCtrl.selectUser(users[index].username!);
-                                  return DetailUser(newCard: newCard);
-                                }),
+      return Scaffold(
+        backgroundColor: Theme.of(context).canvasColor,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: newCard != null
+            ? FloatingActionButton(
+                backgroundColor: Colors.red,
+                onPressed: () => setState(() {
+                      newCard = null;
+                      userCtrl.searchInList('');
+                    }),
+                child: const Icon(Icons.close))
+            : null,
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                expandedHeight: 50.0,
+                floating: true,
+                title: search
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).cardColor,
+                        ),
+                        child: TextField(
+                          controller: _editingController,
+                          autofocus: true,
+                          onChanged: userCtrl.searchInList,
+                          decoration: InputDecoration(
+                            hintText: 'Поиск',
+                            hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
                           ),
-                      childCount: users.length),
-                ),
-              ],
-            ),
+                        ),
+                      )
+                    : Text('Сотрудники', style: Theme.of(context).textTheme.titleLarge),
+                actions: [
+                  IconButton(
+                    onPressed: onSearch,
+                    icon: customIcon,
+                  )
+                ],
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) => Slidable(
+                          endActionPane: ActionPane(motion: const BehindMotion(), children: [
+                            SlidableAction(
+                              label: 'Поменять карточку',
+                              padding: EdgeInsets.all(5),
+                              backgroundColor: Colors.red,
+                              icon: Icons.refresh,
+                              onPressed: (_) {
+                                // if (newCard != null) userCtrl.tryChangeUserCard(users[index].username!, newCard!);
+                              },
+                            ),
+                            SlidableAction(
+                              label: 'Уволить',
+                              backgroundColor: Colors.red,
+                              autoClose: true,
+                              icon: Icons.clear,
+                              onPressed: (_) {
+                                // userCtrl.tryFireUser(users[index].username!);
+                              },
+                            ),
+                          ]),
+                          child: Card(
+                            clipBehavior: Clip.antiAlias,
+                            child: ExpansionTile(
+                              shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              title: Text(
+                                  users[index].full_name!.trim().isNotEmpty
+                                      ? users[index].full_name!
+                                      : users[index].username!,
+                                  style: Theme.of(context).textTheme.titleLarge),
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    TextButton(
+                                      style: ButtonStyle(
+                                        foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                                      ),
+                                      child: const Text('Уволить'),
+                                      onPressed: () {
+                                        userCtrl.tryFireUser(users[index].username!);
+                                      },
+                                    ),
+                                    TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor:
+                                                newCard != null ? Colors.yellow : Theme.of(context).disabledColor),
+                                        child: const Text('Поменять карту'),
+                                        onPressed: () {
+                                          if (newCard != null) {
+                                            userCtrl.tryChangeUserCard(users[index].username!, newCard!);
+                                          }
+                                        })
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    childCount: users.length),
+              ),
+            ],
           ),
-          extendBody: true,
-          bottomNavigationBar: AnimatedContainer(
-            color: Theme.of(context).canvasColor,
-            duration: const Duration(milliseconds: 300),
-            height: newCard != null ? 60.0 : 0.0,
-            child: BottomAppBar(
-              shape: const CircularNotchedRectangle(),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              notchMargin: 4.0,
-              color: Colors.transparent,
-              child: Center(
-                  child: Text(
-                newCard != null ? newCard!['card_id'] : '',
-                style: const TextStyle(color: Colors.white70, fontSize: 30),
-              )),
-            ),
+        ),
+        extendBody: true,
+        bottomNavigationBar: AnimatedContainer(
+          color: Theme.of(context).canvasColor,
+          duration: const Duration(milliseconds: 300),
+          height: newCard != null ? 60.0 : 0.0,
+          child: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            notchMargin: 4.0,
+            color: Colors.transparent,
+            child: Center(
+                child: Text(
+              newCard != null ? newCard!['card_id'] : '',
+              style: const TextStyle(color: Colors.white70, fontSize: 30),
+            )),
           ),
         ),
       );

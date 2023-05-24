@@ -13,7 +13,6 @@ class UserCtrl extends GetxController {
 
   UserCtrl();
 
-  User? user;
   List<User> _users = [];
   List<User> _allUsers = [];
 
@@ -34,19 +33,18 @@ class UserCtrl extends GetxController {
     update();
   }
 
-  Future<bool> tryFireUser() async {
+  Future<bool> tryFireUser(String username) async {
     timer?.cancel();
-    Response resp = await userAct.tryFireUser(user!.username!);
+    Response resp = await userAct.tryFireUser(username);
     if (resp.body != null) messageSnack(title: resp.body, isSuccess: resp.statusCode == 200);
     if (resp.statusCode == 200) {
       _users.clear();
       _allUsers.forEach((element) {
-        if (element.username!.toLowerCase() != user!.username!.toLowerCase()) {
+        if (element.username!.toLowerCase() != username.toLowerCase()) {
           _users.add(element);
         }
       });
       _allUsers = [..._users];
-      user = null;
       update();
     }
     return resp.statusCode == 200;
@@ -84,10 +82,6 @@ class UserCtrl extends GetxController {
     d.Response resp = await userAct.tryUploadAvatar(username, filePath);
     messageSnack(title: resp.data.toString(), isSuccess: resp.statusCode == 200);
     update();
-  }
-
-  void selectUser(String username) {
-    user = _users.firstWhereOrNull((element) => element.username == username);
   }
 
   void searchInList(String value) {

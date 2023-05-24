@@ -50,9 +50,8 @@ class Styles {
         backgroundColor: white,
       ),
       canvasColor: white,
-      cardColor: white,
       appBarTheme: AppBarTheme(backgroundColor: white),
-      cardTheme: const CardTheme(color: Color(0xffd4d4d5)),
+      cardTheme: const CardTheme(color: Colors.white),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(

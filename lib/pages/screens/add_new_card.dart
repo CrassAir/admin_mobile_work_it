@@ -103,7 +103,6 @@ class _AddNewCardState extends State<AddNewCard> {
             expandedHeight: 50.0,
             flexibleSpace: FlexibleSpaceBar(
               title: Text('Новые карточки'),
-              background: FlutterLogo(),
             ),
           ),
           SliverAnimatedList(

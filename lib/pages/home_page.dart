@@ -25,41 +25,37 @@ class _HomePageState extends State<HomePage> {
   var accountController = Get.find<AccountCtrl>();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: CustomScrollView(slivers: <Widget>[
       SliverAppBar(
         expandedHeight: 50.0,
-        flexibleSpace: const FlexibleSpaceBar(
-          title: Text('Адмника'),
-          background: FlutterLogo(),
+        backgroundColor: Theme.of(context).canvasColor,
+        flexibleSpace: FlexibleSpaceBar(
+          title: Text('Адмника', style: Theme.of(context).textTheme.titleLarge),
         ),
         actions: [
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
             onSelected: (value) {
               switch (value) {
-                // case 1:
-                //   vm.changeTheme(isDarkTheme: !vm.isDarkTheme);
-                //   break;
+                case 1:
+                  Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+                  storage.write(key: 'isDarkMode', value: (!Get.isDarkMode).toString());
+                  break;
                 case 2:
                   accountController.logout();
                   break;
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-              // PopupMenuItem(
-              //   value: 1,
-              //   child: ListTile(
-              //     leading: vm.isDarkTheme ?  const Icon(Icons.light_mode) : const Icon(Icons.dark_mode),
-              //     title: vm.isDarkTheme ? const Text('Light mode') : const Text('Dark mode'),
-              //   ),
-              // ),
+              PopupMenuItem(
+                value: 1,
+                child: ListTile(
+                  leading: Get.isDarkMode ? const Icon(Icons.light_mode) : const Icon(Icons.dark_mode),
+                  title: Get.isDarkMode ? const Text('Light mode') : const Text('Dark mode'),
+                ),
+              ),
               // const PopupMenuDivider(),
               const PopupMenuItem(
                 value: 2,
@@ -77,18 +73,18 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (BuildContext context, int index, Animation<double> animation) {
             var data = listData[index];
             var title = data['title']!;
-            return Card(
-              child: OpenContainer(
+            return OpenContainer(
                   openColor: Theme.of(context).cardColor,
-                  closedColor: Theme.of(context).cardColor,
+                  closedColor: Theme.of(context).canvasColor,
+                  closedElevation: 0,
                   closedBuilder: (context, action) {
-                    return ListTile(
-                      tileColor: Theme.of(context).cardColor,
-                      title: Text(title),
+                    return Card(
+                      child: ListTile(
+                        title: Text(title),
+                      ),
                     );
                   },
-                  openBuilder: (context, action) => listData[index]['widget']),
-            );
+                  openBuilder: (context, action) => listData[index]['widget']);
           })
     ]));
   }

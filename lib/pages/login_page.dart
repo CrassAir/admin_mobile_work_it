@@ -105,7 +105,6 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          SERVER_IP = formData['server_ip']!;
                           accountController
                               .tryLoginIn(formData['username']!, formData['password']!)
                               .then((value) {
