@@ -151,28 +151,7 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) => Slidable(
-                          endActionPane: ActionPane(motion: const BehindMotion(), children: [
-                            SlidableAction(
-                              label: 'Поменять карточку',
-                              padding: EdgeInsets.all(5),
-                              backgroundColor: Colors.red,
-                              icon: Icons.refresh,
-                              onPressed: (_) {
-                                // if (newCard != null) userCtrl.tryChangeUserCard(users[index].username!, newCard!);
-                              },
-                            ),
-                            SlidableAction(
-                              label: 'Уволить',
-                              backgroundColor: Colors.red,
-                              autoClose: true,
-                              icon: Icons.clear,
-                              onPressed: (_) {
-                                // userCtrl.tryFireUser(users[index].username!);
-                              },
-                            ),
-                          ]),
-                          child: Card(
+                    (BuildContext context, int index) => Card(
                             clipBehavior: Clip.antiAlias,
                             child: ExpansionTile(
                               shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -207,7 +186,6 @@ class _ChangeOrDeactivateUserCardState extends State<ChangeOrDeactivateUserCard>
                                   ],
                                 ),
                               ],
-                            ),
                           ),
                         ),
                     childCount: users.length),
