@@ -1,7 +1,7 @@
-import 'package:admin_mobile_work_it/controllers/account_ctrl.dart';
-import 'package:admin_mobile_work_it/screens/add_new_card.dart';
-import 'package:admin_mobile_work_it/screens/card_for_issue_or_receive.dart';
-import 'package:admin_mobile_work_it/screens/change_user_card.dart';
+import 'package:admin_mobile_work_it/pages/screens/add_new_card.dart';
+import 'package:admin_mobile_work_it/pages/screens/change_user_card.dart';
+import 'package:admin_mobile_work_it/pages/screens/doors_page.dart';
+import 'package:admin_mobile_work_it/store/controllers/account_ctrl.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> listData = [
     {'title': 'Добавить кары', 'widget': const AddNewCard()},
     {'title': 'Сотрудники', 'widget': const ChangeOrDeactivateUserCard()},
-    {'title': 'Забрать или выдать карту', 'widget': const CardForIssueOrReceive()},
+    {'title': 'Двери', 'widget': const DoorsPage()},
   ];
 
   var accountController = Get.find<AccountCtrl>();

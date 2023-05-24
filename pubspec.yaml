@@ -23,32 +23,22 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  pedantic: ^1.11.0
-  flutter_secure_storage: ^5.0.2
-  dio: ^4.0.0
-#  nfc_manager: ^3.1.1
+  flutter_localizations:
+    sdk: flutter
   nfc_manager:
     path: nfc_manager-3.1.0
-#  overlay_support: ^1.2.1
-  flutter_slidable: ^0.6.0
-  flutter_local_notifications: ^5.0.0+4
-  jiffy: ^4.1.0
+
   connectivity: ^3.0.4
-  bottom_navy_bar: ^6.0.0
-  animations: ^2.0.1
   flutter_speed_dial: ^4.4.0+2
-
-#for camera detector... maybe clear some this
-
-  camera:
-    git:
-      url: https://github.com/flutter/plugins
-      path: packages/camera/camera
-      ref: 9e46048ad2e1f085c1e8f6c77391fa52025e681f
+  pedantic: ^1.11.0
+  flutter_secure_storage: ^8.0.0
+  dio: ^5.1.2
+  animations: ^2.0.1
   get: ^4.3.8
-  provider: ^6.0.1
-#  camera: ^0.9.4+4
-#  google_ml_kit: ^0.7.3
+  bottom_navy_bar: ^6.0.0
+  intl: ^0.18.0
+  speech_to_text: ^6.1.1
+  flutter_slidable: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

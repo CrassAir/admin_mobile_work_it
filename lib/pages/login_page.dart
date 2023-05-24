@@ -1,6 +1,6 @@
 import 'package:admin_mobile_work_it/constance.dart';
-import 'package:admin_mobile_work_it/controllers/account_ctrl.dart';
-import 'package:admin_mobile_work_it/data/api_client.dart';
+import 'package:admin_mobile_work_it/store/controllers/account_ctrl.dart';
+import 'package:admin_mobile_work_it/store/api_client.dart';
 import 'package:admin_mobile_work_it/routes.dart';
 import 'package:admin_mobile_work_it/service/api.dart';
 import 'package:flutter/material.dart';
@@ -16,22 +16,13 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Map<String?, String?> formData = {'username': null, 'password': null, 'server_ip': null};
+  final Map<String?, String?> formData = {'username': null, 'password': null};
   final AccountCtrl accountController = Get.find();
   final ApiClient apiClient = Get.find();
-  String _server_ip = '';
 
   @override
   void initState() {
     super.initState();
-    _server_ip = apiClient.baseUrl != null ? apiClient.baseUrl!.split('//')[1] : AppConstance.APP_URL;
-    // NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
-    //   var identifier = tagTransform(tag);
-    //   var password = tagGetPassword(tag);
-    //   await accountController.tryLoginInByCard(identifier, password);
-    //   // StoreProvider.dispatch(context, TryAuth(username: identifier, password: '3223'));
-    //   setState(() {});
-    // });
   }
 
   @override
@@ -105,28 +96,6 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                TextFormField(
-                  initialValue: _server_ip,
-                  decoration: const InputDecoration(
-                      hintText: 'Сервер',
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                        color: Colors.transparent,
-                        width: 1,
-                      )),
-                      prefixIcon: Icon(Icons.dns)),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Сервер не может быть пустым';
-                    }
-                    return null;
-                  },
-                  onSaved: (String? value) {
-                    setState(() {
-                      formData['server_ip'] = value!;
-                    });
-                  },
-                ),
                 Center(
                   child: Container(
                     height: 60,
@@ -138,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                           _formKey.currentState!.save();
                           SERVER_IP = formData['server_ip']!;
                           accountController
-                              .tryLoginIn(formData['username']!, formData['password']!, SERVER_IP)
+                              .tryLoginIn(formData['username']!, formData['password']!)
                               .then((value) {
                             if (value) {
                               Get.offAndToNamed(RouterHelper.home);
